@@ -6,26 +6,37 @@ import (
 	"street_stall/biz/domain/model"
 )
 
+// GetVisitorByUserId 根据userId获取对应的visitor
+func GetVisitorByUserId(userId uint) *model.Visitor {
+	db := GetDB()
+	db = filterByUserId(db, userId)
+	visitor := selectVisitor(db)
+	return visitor
+}
+
 // InsertVisitor 插入一个visitor对象
-func InsertVisitor(db *gorm.DB, insertVisitor *model.Visitor) *model.Visitor {
+func InsertVisitor(insertVisitor *model.Visitor) *model.Visitor {
+	db := GetDB()
 	db.Create(insertVisitor)
-	if db.Error != nil {
-		return nil
+	if err := db.Error; err != nil {
+		log.Printf("[service][visitor][InsertVisitor] db insert error, err:%s", err)
+		panic(err)
 	}
 	return insertVisitor
 }
 
-// SelectVisitor 查询visitor
-func SelectVisitor(db *gorm.DB) *model.Visitor{
+// SaveVisitor 更新并覆盖merchant
+func SaveVisitor(visitor *model.Visitor) {
+	db := GetDB()
+	db.Save(visitor)
+}
+
+// selectVisitor 查询visitor
+func selectVisitor(db *gorm.DB) *model.Visitor {
 	visitor := &model.Visitor{}
 	db = db.First(visitor)
 	if err := db.Error; err != nil {
-		log.Printf("[service][visitor][SelectVisitor] db select error, err:%s", err)
+		log.Printf("[service][visitor][selectVisitor] db select error, err:%s", err)
 	}
 	return visitor
-}
-
-// SaveVisitor 更新并覆盖merchant
-func SaveVisitor(db *gorm.DB, visitor *model.Visitor) {
-	db.Save(visitor)
 }

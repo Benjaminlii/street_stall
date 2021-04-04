@@ -18,6 +18,6 @@ func SaveQuestionByCurrentUser(c *gin.Context, question string) *model.Question 
 		Status:   constants.QUESTION_STATUS_START,
 	}
 
-	q := dal.InsertQuestion(dal.GetDB(), insertQuestion)
+	q := dal.InsertQuestion(insertQuestion)
 	return q
 }

@@ -11,9 +11,7 @@ import (
 
 // SelectUser 查询用户信息，用于登录
 func SelectUser(username string, password string) *model.User {
-	db := dal.GetDB()
-	db = dal.FilterByUsernameAndPassword(db, username, password)
-	user := dal.SelectUser(db)
+	user := dal.GetUserByUsernameAndPassword(username, password)
 	if user == nil {
 		return nil
 	}
@@ -33,7 +31,7 @@ func SignUp(username string, password string, name string, userIdentity uint, ca
 		Password:     password,
 		UserIdentity: userIdentity,
 	}
-	user = dal.InsertUser(db, user)
+	user = dal.InsertUser(user)
 
 	if userIdentity == constants.USERIDENTITY_MERCHANT {
 		// 商户注册
@@ -42,14 +40,14 @@ func SignUp(username string, password string, name string, userIdentity uint, ca
 			Name:     name,
 			Category: category,
 		}
-		merchant = dal.InsertMerchant(db, merchant)
+		merchant = dal.InsertMerchant(merchant)
 	} else if userIdentity == constants.USERIDENTITY_VISITER {
 		// 游客注册
 		visitor := &model.Visitor{
 			UserId: user.ID,
 			Name:   name,
 		}
-		visitor = dal.InsertVisitor(db, visitor)
+		visitor = dal.InsertVisitor(visitor)
 		if visitor == nil {
 			log.Print("[service][user][SignUp] InsertVisitor fail")
 			panic(constants.SYSTEM_ERROR)
@@ -67,7 +65,7 @@ func UpdateMerchantByUserId(c *gin.Context, name string, category uint, introduc
 	merchant.Category = category
 	merchant.Introduction = introduction
 
-	dal.SaveMerchant(dal.GetDB(), merchant)
+	dal.SaveMerchant(merchant)
 
 	return merchant
 }
@@ -82,9 +80,7 @@ func GetMerchantByCurrentUser(c *gin.Context) *model.Merchant {
 		panic(constants.AUTHORITY_ERROR)
 	}
 
-	db := dal.GetDB()
-	db = dal.FilterByUserId(db, currentUser.ID)
-	merchant := dal.SelectMerchant(db)
+	merchant := dal.GetMerchantByUserId(currentUser.ID)
 
 	return merchant
 }
@@ -96,7 +92,7 @@ func UpdateVisitorByUserId(c *gin.Context, name string, introduction string) *mo
 	visitor.Name = name
 	visitor.Introduction = introduction
 
-	dal.SaveVisitor(dal.GetDB(), visitor)
+	dal.SaveVisitor(visitor)
 
 	return visitor
 }
@@ -110,9 +106,7 @@ func GetVisitorByCurrentUser(c *gin.Context) *model.Visitor {
 		panic(constants.AUTHORITY_ERROR)
 	}
 
-	db := dal.GetDB()
-	db = dal.FilterByUserId(db, currentUser.ID)
-	visitor := dal.SelectVisitor(db)
+	visitor := dal.GetVisitorByUserId(currentUser.ID)
 
 	return visitor
 }

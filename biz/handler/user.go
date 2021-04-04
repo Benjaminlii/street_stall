@@ -106,7 +106,7 @@ func UpdateMerchant(c *gin.Context) {
 
 
 	// 设置请求响应
-	user := dal.SelectUser(dal.FilterById(dal.GetDB(), merchant.UserId))
+	user := dal.GetUserById(merchant.UserId)
 	if user == nil {
 		panic(constants.SYSTEM_ERROR)
 	}
@@ -145,7 +145,7 @@ func UpdateVisitor(c *gin.Context) {
 	merchant := service.UpdateVisitorByUserId(c, name, introduction)
 
 	// 设置请求响应
-	user := dal.SelectUser(dal.FilterById(dal.GetDB(), merchant.UserId))
+	user := dal.GetUserById(merchant.UserId)
 	if user == nil{
 		panic(constants.SYSTEM_ERROR)
 	}
@@ -168,7 +168,7 @@ func GetVisitor(c *gin.Context) {
 	visitor := service.GetVisitorByCurrentUser(c)
 
 	// 设置请求响应
-	user := dal.SelectUser(dal.FilterById(dal.GetDB(), visitor.UserId))
+	user := dal.GetUserById(visitor.UserId)
 	if user == nil{
 		panic(constants.SYSTEM_ERROR)
 	}
@@ -191,7 +191,7 @@ func GetMerchant(c *gin.Context) {
 	merchant := service.GetMerchantByCurrentUser(c)
 
 	// 设置请求响应
-	user := dal.SelectUser(dal.FilterById(dal.GetDB(), merchant.UserId))
+	user := dal.GetUserById(merchant.UserId)
 	if user == nil{
 		panic(constants.SYSTEM_ERROR)
 	}

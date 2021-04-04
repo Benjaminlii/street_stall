@@ -12,7 +12,7 @@ import (
 
 // GetPlaceNameToIdMap 获得key-value为place.name-place.id的map
 func GetPlaceNameToIdMap(c *gin.Context) map[string]string {
-	places := dal.AllPlace(dal.GetDB())
+	places := dal.AllPlace()
 
 	placeNameToIdMap := make(map[string]string, len(places))
 
@@ -30,7 +30,7 @@ func GetPlaceNameToIdMap(c *gin.Context) map[string]string {
 // 如果找不到，那么根据时间是否是过去式来进行判断
 func GetLocationMapAndPlaceInfo(c *gin.Context, placeId uint) map[string]interface{} {
 	// 验证区域是否存在
-	place := dal.SelectPlace(dal.FilterById(dal.GetDB(), placeId))
+	place := dal.GetPlaceById(placeId)
 	if place == nil {
 		log.Printf("[service][place][GetLocationMapAndPlaceInfo] this place is not exist, place_id:%d", placeId)
 		panic(constants.NULL_ERROR)
@@ -66,6 +66,7 @@ func GetLocationMapAndPlaceInfo(c *gin.Context, placeId uint) map[string]interfa
 	//            }
 	//        }
 	ans := make(map[string]interface{}, 4)
+	ans["place_name"] = place.Name
 	// 摊位信息map字段
 	locationMap := make(map[string]interface{}, len(locationsInThisPlace))
 	ans["location_map"] = locationMap

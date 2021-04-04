@@ -7,12 +7,38 @@ import (
 	"street_stall/biz/domain/model"
 )
 
-// SelectUser 根据db去查询user模型
-func SelectUser(db *gorm.DB) *model.User {
+// GetUserById 根据userId获取user
+func GetUserById(userId uint) *model.User {
+	db := GetDB()
+	db = filterById(db, userId)
+	user := selectUser(db)
+	return user
+}
+
+// GetUserByUsernameAndPassword 根据用户名密码查找user
+func GetUserByUsernameAndPassword(username string, password string) *model.User {
+	db := GetDB()
+	db = filterByUsernameAndPassword(db, username, password)
+	user := selectUser(db)
+	return user
+}
+
+// InsertUser 插入一个user对象
+func InsertUser(insertUser *model.User) *model.User {
+	db := GetDB()
+	db.Create(insertUser)
+	if err := db.Error; err != nil {
+		log.Printf("[service][user][InsertUser] db insert error, err:%s", err)
+	}
+	return insertUser
+}
+
+// selectUser 根据db去查询user模型
+func selectUser(db *gorm.DB) *model.User {
 	user := &model.User{}
 	db.First(user)
 	if err := db.Error; err != nil {
-		log.Printf("[service][user][SelectUser] db select error, err:%s", err)
+		log.Printf("[service][user][selectUser] db select error, err:%s", err)
 		if err == gorm.ErrRecordNotFound {
 			return nil
 		} else {
@@ -23,24 +49,15 @@ func SelectUser(db *gorm.DB) *model.User {
 	return user
 }
 
-// FilterByUsernameAndPassword 通过用户名以及密码
-func FilterByUsernameAndPassword(db *gorm.DB, username string, password string) *gorm.DB {
+// filterByUsernameAndPassword 通过用户名以及密码
+func filterByUsernameAndPassword(db *gorm.DB, username string, password string) *gorm.DB {
 	db = db.Where("username = ?", username)
 	db = db.Where("password = ?", password)
 	return db
 }
 
-// InsertUser 插入一个user对象
-func InsertUser(db *gorm.DB, insertUser *model.User) *model.User {
-	db.Create(insertUser)
-	if err := db.Error; err != nil {
-		log.Printf("[service][user][InsertUser] db insert error, err:%s", err)
-	}
-	return insertUser
-}
-
-// FilterByUserId 通过userId过滤
-func FilterByUserId(db *gorm.DB, userId uint) *gorm.DB {
+// filterByUserId 通过userId过滤
+func filterByUserId(db *gorm.DB, userId uint) *gorm.DB {
 	db = db.Where("user_id = ?", userId)
 	return db
 }
