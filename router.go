@@ -38,6 +38,12 @@ func register(r *gin.Engine) {
 		place.POST("/get_location_map", handler.GetLocationMap)
 	}
 
+	// 摊位管理模块
+	location := streetStall.Group("/location")
+	{
+		location.POST("/reserve", handler.Reserve)
+	}
+
 	ping := streetStall.Group("/ping")
 	{
 		ping.POST("/ping", handler.Ping)
