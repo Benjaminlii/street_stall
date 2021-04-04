@@ -63,6 +63,7 @@ func createTable() {
 	}
 	if !db.HasTable(&model.Order{}) {
 		db.Set("gorm:table_options", "ENGINE=InnoDB DEFAULT CHARSET=utf8").CreateTable(&model.Order{})
+		db.Model(&model.Order{}).AddForeignKey("place_id", "places(id)", "RESTRICT", "RESTRICT")
 		db.Model(&model.Order{}).AddForeignKey("location_id", "locations(id)", "RESTRICT", "RESTRICT")
 		db.Model(&model.Order{}).AddForeignKey("user_id", "users(id)", "RESTRICT", "RESTRICT")
 		log.Print("[system][mysql][createTable] create table `order`")

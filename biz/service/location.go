@@ -11,7 +11,7 @@ import (
 // GetLocationsByPlaceId 获取某个place（区域）下的所有Location（摊位）
 func GetLocationsByPlaceId(c *gin.Context, placeId uint) []model.Location {
 	place := dal.GetPlaceById(placeId)
-	if place == nil{
+	if place == nil {
 		log.Printf("[service][place][GetLocationsByPlaceId] place is not exist")
 		panic(constants.NULL_ERROR)
 	}
@@ -23,15 +23,16 @@ func GetLocationsByPlaceId(c *gin.Context, placeId uint) []model.Location {
 func Reserve(c *gin.Context, placeId uint, locationId uint, reserveTime uint, comment string) *model.Order {
 	// 获取商户信息
 	merchant := GetMerchantByCurrentUser(c)
-	_ = dal.GetPlaceById(placeId)
+	place := dal.GetPlaceById(placeId)
 	location := dal.GetLocationById(locationId)
 
 	order := &model.Order{
-		Status: constants.ORDER_STATUS_TO_BE_USED,
-		LocationId: location.ID,
-		MerchantId: merchant.ID,
+		Status:      constants.ORDER_STATUS_TO_BE_USED,
+		PlaceId:     place.ID,
+		LocationId:  location.ID,
+		MerchantId:  merchant.ID,
 		ReserveTime: reserveTime,
-		Remark: comment,
+		Remark:      comment,
 	}
 
 	insertOrder := dal.InsertOrder(order)
