@@ -1,0 +1,19 @@
+mysql:
+  host: 49.235.228.156
+  port: 3306
+  db: street_stall
+  username: root
+  password: litao.
+
+redis:
+  host: 49.235.228.156
+  port: 6379
+  password: litao.
+  db: 1
+
+http:
+  sms:
+    api_url: https://service-7ttgxspu-1256140209.gz.apigw.tencentcs.com/release/sms_send/post
+    secret_id: AKIDkbG5ylo0sevNE9GNY33aC3Pz4HG4TTs7ucnL
+    secret_key: H7mKZ9Kx6kLrsTE1vC3Dh6p1QvWaEW7X0WDi7I6x
+    template_id: xxxxxxxxxxxxxxxxxxxxxxxx
