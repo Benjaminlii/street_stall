@@ -6,7 +6,7 @@ import (
 	"log"
 	"street_stall/biz/constants"
 	"street_stall/biz/constants/errors"
-	"street_stall/biz/dal"
+	"street_stall/biz/dao"
 	"street_stall/biz/drivers"
 	"street_stall/biz/util"
 )
@@ -27,7 +27,7 @@ func GetMerchantsInfoByNameAndPlaceId(c *gin.Context, placeId uint, merchantName
 	}
 
 	// 查询得到商家
-	merchants := dal.FindMerchantByPlaceIdNameAndCategory(placeId, merchantName, merchantIds, category)
+	merchants := dao.FindMerchantByPlaceIdNameAndCategory(placeId, merchantName, merchantIds, category)
 
 	// 组装结果集
 	ans := make(map[string]map[string]string, len(merchants))

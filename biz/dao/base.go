@@ -1,4 +1,4 @@
-package dal
+package dao
 
 import (
 	"github.com/jinzhu/gorm"

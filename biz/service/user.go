@@ -5,14 +5,14 @@ import (
 	"log"
 	"street_stall/biz/constants"
 	"street_stall/biz/constants/errors"
-	"street_stall/biz/dal"
+	"street_stall/biz/dao"
 	"street_stall/biz/domain/model"
 	"street_stall/biz/util"
 )
 
 // SelectUser 查询用户信息，用于登录
 func SelectUser(username string, password string) *model.User {
-	user := dal.GetUserByUsernameAndPassword(username, password)
+	user := dao.GetUserByUsernameAndPassword(username, password)
 	if user == nil {
 		return nil
 	}
@@ -21,7 +21,7 @@ func SelectUser(username string, password string) *model.User {
 
 // SignUp 用户注册
 func SignUp(username string, password string, name string, userIdentity uint, category uint) *model.User {
-	db := dal.GetDB()
+	db := dao.GetDB()
 	// 数据库事物
 	tx := db.Begin()
 	defer tx.Commit()
@@ -32,7 +32,7 @@ func SignUp(username string, password string, name string, userIdentity uint, ca
 		Password:     password,
 		UserIdentity: userIdentity,
 	}
-	user = dal.InsertUser(user)
+	user = dao.InsertUser(user)
 
 	if userIdentity == constants.USERIDENTITY_MERCHANT {
 		// 商户注册
@@ -41,14 +41,14 @@ func SignUp(username string, password string, name string, userIdentity uint, ca
 			Name:     name,
 			Category: category,
 		}
-		merchant = dal.InsertMerchant(merchant)
+		merchant = dao.InsertMerchant(merchant)
 	} else if userIdentity == constants.USERIDENTITY_VISITER {
 		// 游客注册
 		visitor := &model.Visitor{
 			UserId: user.ID,
 			Name:   name,
 		}
-		visitor = dal.InsertVisitor(visitor)
+		visitor = dao.InsertVisitor(visitor)
 		if visitor == nil {
 			log.Print("[service][user][SignUp] InsertVisitor fail")
 			panic(errors.SYSTEM_ERROR)
@@ -66,7 +66,7 @@ func UpdateMerchantByUserId(c *gin.Context, name string, category uint, introduc
 	merchant.Category = category
 	merchant.Introduction = introduction
 
-	dal.SaveMerchant(merchant)
+	dao.SaveMerchant(merchant)
 
 	return merchant
 }
@@ -81,7 +81,7 @@ func GetMerchantByCurrentUser(c *gin.Context) *model.Merchant {
 		panic(errors.AUTHORITY_ERROR)
 	}
 
-	merchant := dal.GetMerchantByUserId(currentUser.ID)
+	merchant := dao.GetMerchantByUserId(currentUser.ID)
 
 	return merchant
 }
@@ -93,7 +93,7 @@ func UpdateVisitorByUserId(c *gin.Context, name string, introduction string) *mo
 	visitor.Name = name
 	visitor.Introduction = introduction
 
-	dal.SaveVisitor(visitor)
+	dao.SaveVisitor(visitor)
 
 	return visitor
 }
@@ -107,7 +107,7 @@ func GetVisitorByCurrentUser(c *gin.Context) *model.Visitor {
 		panic(errors.AUTHORITY_ERROR)
 	}
 
-	visitor := dal.GetVisitorByUserId(currentUser.ID)
+	visitor := dao.GetVisitorByUserId(currentUser.ID)
 
 	return visitor
 }

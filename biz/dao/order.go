@@ -1,8 +1,9 @@
-package dal
+package dao
 
 import (
 	"github.com/jinzhu/gorm"
 	"log"
+	"street_stall/biz/constants/errors"
 	"street_stall/biz/domain/model"
 )
 
@@ -34,6 +35,20 @@ func InsertOrder(insertOrder *model.Order) *model.Order {
 	return insertOrder
 }
 
+// GetOrderByMerchantIdOrderByCreatedAtDesc 根据merchantId查询其预约单，按照createdAt降序排列
+func GetOrderById(orderId uint) *model.Order {
+	db := GetDB()
+	db = filterById(db, orderId)
+	order := selectOrder(db)
+	return order
+}
+
+// SaveOrder 更新并覆盖order
+func SaveOrder(order *model.Order) {
+	db := GetDB()
+	db.Save(order)
+}
+
 // filterByLocationId 通过摊位Id过滤
 func filterByLocationId(db *gorm.DB, locationId uint) *gorm.DB {
 	db = db.Where("location_id = ?", locationId)
@@ -50,4 +65,20 @@ func filterByMerchantId(db *gorm.DB, merchantId uint) *gorm.DB {
 func findOrder(db *gorm.DB) (ans []model.Order) {
 	db.Find(&ans)
 	return
+}
+
+// selectOrder 根据db去查询order模型
+func selectOrder(db *gorm.DB) *model.Order {
+	order := &model.Order{}
+	db.First(order)
+	if err := db.Error; err != nil {
+		log.Printf("[service][order][selectOrder] db select error, err:%s", err)
+		if err == gorm.ErrRecordNotFound {
+			return nil
+		} else {
+			panic(errors.SYSTEM_ERROR)
+		}
+	}
+
+	return order
 }

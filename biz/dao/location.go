@@ -1,4 +1,4 @@
-package dal
+package dao
 
 import (
 	"github.com/jinzhu/gorm"
@@ -28,7 +28,6 @@ func findLocation(db *gorm.DB) (locations []model.Location) {
 	return
 }
 
-
 // selectLocation 查询location
 func selectLocation(db *gorm.DB) *model.Location {
 	location := &model.Location{}
@@ -45,4 +44,3 @@ func filterByPlaceId(db *gorm.DB, placeId uint) *gorm.DB {
 	db = db.Where("place_id = ?", placeId)
 	return db
 }
-

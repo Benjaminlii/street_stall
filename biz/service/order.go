@@ -1,16 +1,22 @@
 package service
 
 import (
+	"fmt"
 	"github.com/gin-gonic/gin"
-	"street_stall/biz/dal"
+	"log"
+	"street_stall/biz/constants"
+	"street_stall/biz/constants/errors"
+	"street_stall/biz/dao"
 	"street_stall/biz/domain/dto"
+	"street_stall/biz/drivers"
 	"street_stall/biz/util"
+	"time"
 )
 
 // GetAllTodayReserveByLocation 得到某个摊位下当天的所有预约信息
 func GetAllTodayReserveByLocation(c *gin.Context, locationId uint) map[string]int {
 	// 查询该摊位当天的所有order
-	orders := dal.GetAllTodayOrderByLocationId(locationId)
+	orders := dao.GetAllTodayOrderByLocationId(locationId)
 
 	reserveInfoMap := make(map[string]int, len(orders))
 
@@ -26,13 +32,13 @@ func GetOrderByCurrentMerchant(c *gin.Context) []dto.GetOrderDTO {
 	// 获取当前登录的商户
 	merchant := GetMerchantByCurrentUser(c)
 	// 查询其预约单信息
-	orders := dal.GetOrderByMerchantIdOrderByCreatedAtDesc(merchant.ID)
+	orders := dao.GetOrderByMerchantIdOrderByCreatedAtDesc(merchant.ID)
 
 	ans := make([]dto.GetOrderDTO, len(orders))
 	for _, order := range orders {
 		// 根据预约单获取预约单中的摊位信息和区域信息
-		place := dal.GetPlaceById(order.PlaceId)
-		location := dal.GetLocationById(order.LocationId)
+		place := dao.GetPlaceById(order.PlaceId)
+		location := dao.GetLocationById(order.LocationId)
 		getOrderDTO := dto.GetOrderDTO{
 			OrderId:  order.ID,
 			CreateAt: order.CreatedAt.Unix(),
@@ -56,4 +62,39 @@ func GetOrderByCurrentMerchant(c *gin.Context) []dto.GetOrderDTO {
 		ans = append(ans, getOrderDTO)
 	}
 	return ans
+}
+
+// ClockIn 商户到预约时间打卡使用摊位
+func ClockIn(c *gin.Context, orderId uint) {
+	// 获取当前登录的商户
+	merchant := GetMerchantByCurrentUser(c)
+	// 获取预约单
+	order := dao.GetOrderById(orderId)
+
+	// 校验商户是否一致
+	if merchant.ID != order.ID {
+		log.Printf("[service][order][ClockIn] order is not belong current merchant, current merchant name:%s, order id:%d", merchant.Name, order.ID)
+		panic(errors.ORDER_MERCHANT_ERROR)
+	}
+
+	// 校验时间
+	currentTime := time.Now()
+	reserveTimeInt := int(order.ReserveTime)
+	todayFirstSecond := time.Date(currentTime.Year(), currentTime.Month(), currentTime.Day(), 0, 0, 0, 0, currentTime.Location())
+	currentHour := time.Now().Hour()
+	// 校验当前小时大于预约时间，并且小于预约时间+2，并且订单的创建时间是今天
+	if !(currentHour > reserveTimeInt &&
+		currentHour < reserveTimeInt+2 &&
+		order.CreatedAt.After(todayFirstSecond)) {
+		log.Printf("[service][order][ClockIn] time is not right")
+		panic(errors.ORDER_RESERVE_TIME_ERROR)
+	}
+
+	// 进行打卡
+	// 更新订单状态
+	order.Status = constants.ORDER_STATUS_IN_USING
+	dao.SaveOrder(order)
+	// 同步redis，将当前商户的id添加到redis中当前地区活跃摆摊的set中
+	drivers.RedisClient.SAdd(fmt.Sprintf("%s%d", constants.REDIS_CURRENT_ACTIVE_MERCHANT_PRE, order.PlaceId), merchant.ID)
+	// todo redis刷新定时任务，order更新状态定时任务（状态从使用中到完成）
 }

@@ -6,14 +6,14 @@ import (
 	"strconv"
 	"street_stall/biz/constants"
 	"street_stall/biz/constants/errors"
-	"street_stall/biz/dal"
+	"street_stall/biz/dao"
 	"street_stall/biz/util"
 	"time"
 )
 
 // GetPlaceNameToIdMap 获得key-value为place.name-place.id的map
 func GetPlaceNameToIdMap(c *gin.Context) map[string]string {
-	places := dal.AllPlace()
+	places := dao.AllPlace()
 
 	placeNameToIdMap := make(map[string]string, len(places))
 
@@ -31,7 +31,7 @@ func GetPlaceNameToIdMap(c *gin.Context) map[string]string {
 // 如果找不到，那么根据时间是否是过去式来进行判断
 func GetLocationMapAndPlaceInfo(c *gin.Context, placeId uint) map[string]interface{} {
 	// 验证区域是否存在
-	place := dal.GetPlaceById(placeId)
+	place := dao.GetPlaceById(placeId)
 	if place == nil {
 		log.Printf("[service][place][GetLocationMapAndPlaceInfo] this place is not exist, place_id:%d", placeId)
 		panic(errors.NULL_ERROR)

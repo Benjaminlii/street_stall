@@ -5,7 +5,7 @@ import (
 	"log"
 	"street_stall/biz/constants"
 	"street_stall/biz/constants/errors"
-	"street_stall/biz/dal"
+	"street_stall/biz/dao"
 	"street_stall/biz/drivers"
 	"street_stall/biz/service"
 	"street_stall/biz/util"
@@ -105,7 +105,7 @@ func UpdateMerchant(c *gin.Context) {
 	merchant := service.UpdateMerchantByUserId(c, name, category, introduction)
 
 	// 设置请求响应
-	user := dal.GetUserById(merchant.UserId)
+	user := dao.GetUserById(merchant.UserId)
 	if user == nil {
 		panic(errors.SYSTEM_ERROR)
 	}
@@ -144,7 +144,7 @@ func UpdateVisitor(c *gin.Context) {
 	merchant := service.UpdateVisitorByUserId(c, name, introduction)
 
 	// 设置请求响应
-	user := dal.GetUserById(merchant.UserId)
+	user := dao.GetUserById(merchant.UserId)
 	if user == nil {
 		panic(errors.SYSTEM_ERROR)
 	}
@@ -167,7 +167,7 @@ func GetVisitor(c *gin.Context) {
 	visitor := service.GetVisitorByCurrentUser(c)
 
 	// 设置请求响应
-	user := dal.GetUserById(visitor.UserId)
+	user := dao.GetUserById(visitor.UserId)
 	if user == nil {
 		panic(errors.SYSTEM_ERROR)
 	}
@@ -190,7 +190,7 @@ func GetMerchant(c *gin.Context) {
 	merchant := service.GetMerchantByCurrentUser(c)
 
 	// 设置请求响应
-	user := dal.GetUserById(merchant.UserId)
+	user := dao.GetUserById(merchant.UserId)
 	if user == nil {
 		panic(errors.SYSTEM_ERROR)
 	}

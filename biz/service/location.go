@@ -5,18 +5,18 @@ import (
 	"log"
 	"street_stall/biz/constants"
 	"street_stall/biz/constants/errors"
-	"street_stall/biz/dal"
+	"street_stall/biz/dao"
 	"street_stall/biz/domain/model"
 )
 
 // GetLocationsByPlaceId 获取某个place（区域）下的所有Location（摊位）
 func GetLocationsByPlaceId(c *gin.Context, placeId uint) []model.Location {
-	place := dal.GetPlaceById(placeId)
+	place := dao.GetPlaceById(placeId)
 	if place == nil {
 		log.Printf("[service][place][GetLocationsByPlaceId] place is not exist")
 		panic(errors.NULL_ERROR)
 	}
-	locations := dal.GetLocationsByPlaceId(placeId)
+	locations := dao.GetLocationsByPlaceId(placeId)
 	return locations
 }
 
@@ -24,8 +24,8 @@ func GetLocationsByPlaceId(c *gin.Context, placeId uint) []model.Location {
 func Reserve(c *gin.Context, placeId uint, locationId uint, reserveTime uint, comment string) *model.Order {
 	// 获取商户信息
 	merchant := GetMerchantByCurrentUser(c)
-	place := dal.GetPlaceById(placeId)
-	location := dal.GetLocationById(locationId)
+	place := dao.GetPlaceById(placeId)
+	location := dao.GetLocationById(locationId)
 
 	order := &model.Order{
 		Status:      constants.ORDER_STATUS_TO_BE_USED,
@@ -36,7 +36,7 @@ func Reserve(c *gin.Context, placeId uint, locationId uint, reserveTime uint, co
 		Remark:      comment,
 	}
 
-	insertOrder := dal.InsertOrder(order)
+	insertOrder := dao.InsertOrder(order)
 
 	return insertOrder
 }
