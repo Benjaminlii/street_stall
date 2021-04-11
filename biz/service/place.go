@@ -5,6 +5,7 @@ import (
 	"log"
 	"strconv"
 	"street_stall/biz/constants"
+	"street_stall/biz/constants/errors"
 	"street_stall/biz/dal"
 	"street_stall/biz/util"
 	"time"
@@ -33,7 +34,7 @@ func GetLocationMapAndPlaceInfo(c *gin.Context, placeId uint) map[string]interfa
 	place := dal.GetPlaceById(placeId)
 	if place == nil {
 		log.Printf("[service][place][GetLocationMapAndPlaceInfo] this place is not exist, place_id:%d", placeId)
-		panic(constants.NULL_ERROR)
+		panic(errors.NULL_ERROR)
 	}
 
 	// 获取区域下的所有摊位
@@ -82,7 +83,7 @@ func GetLocationMapAndPlaceInfo(c *gin.Context, placeId uint) map[string]interfa
 
 		// 构造摊位信息
 		locationInfo := make(map[string]interface{}, 2)
-		locationMap[util.UintToString(location.ID)] = locationInfo
+		locationMap[strconv.Itoa(location.Number)] = locationInfo
 		locationInfo[constants.INTRODUCTION] = location.Introduction
 
 		// 该摊位的时间-可预约信息

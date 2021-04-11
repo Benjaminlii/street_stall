@@ -1,4 +1,4 @@
-package constants
+package errors
 
 // 正确
 var SUCCESS = &Error{Code: 10000, ErrorMessage: "接口访问成功"}

@@ -4,6 +4,7 @@ import (
 	"github.com/gin-gonic/gin"
 	"log"
 	"street_stall/biz/constants"
+	"street_stall/biz/constants/errors"
 	"street_stall/biz/dal"
 	"street_stall/biz/domain/model"
 )
@@ -13,7 +14,7 @@ func GetLocationsByPlaceId(c *gin.Context, placeId uint) []model.Location {
 	place := dal.GetPlaceById(placeId)
 	if place == nil {
 		log.Printf("[service][place][GetLocationsByPlaceId] place is not exist")
-		panic(constants.NULL_ERROR)
+		panic(errors.NULL_ERROR)
 	}
 	locations := dal.GetLocationsByPlaceId(placeId)
 	return locations
@@ -38,4 +39,9 @@ func Reserve(c *gin.Context, placeId uint, locationId uint, reserveTime uint, co
 	insertOrder := dal.InsertOrder(order)
 
 	return insertOrder
+}
+
+// GetMerchantsByPlaceId 通过区域（+分类）获取摊位上的商户信息，当前时刻（游客端）
+func GetMerchantsByPlaceId(c *gin.Context, placeId uint, category uint) {
+	// todo
 }

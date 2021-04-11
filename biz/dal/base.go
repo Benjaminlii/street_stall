@@ -25,3 +25,14 @@ func filterById(db *gorm.DB, id uint) *gorm.DB {
 	db = db.Where("id = ?", id)
 	return db
 }
+
+// orderByCreatedAt 按照创建时间排序
+// isDesc:是否降序
+func orderByCreatedAt(db *gorm.DB, isDesc bool) *gorm.DB {
+	if isDesc {
+		db = db.Order("created_at DESC")
+	} else {
+		db = db.Order("created_at ASC")
+	}
+	return db
+}

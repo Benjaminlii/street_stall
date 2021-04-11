@@ -6,6 +6,7 @@ import (
 	"log"
 	"net/http"
 	"street_stall/biz/constants"
+	"street_stall/biz/constants/errors"
 	"street_stall/biz/domain/model"
 	"street_stall/biz/drivers"
 	"time"
@@ -20,7 +21,7 @@ func CheckUserLoginMiddleware() func(c *gin.Context) {
 		if token == "" {
 			log.Printf("[system][CheckUserLoginMiddleware] no token")
 			c.Abort()
-			c.JSON(http.StatusOK, constants.NO_TOKEN_ERROR.ChangeToResp(nil))
+			c.JSON(http.StatusOK, errors.NO_TOKEN_ERROR.ChangeToResp(nil))
 			return
 		}
 
@@ -29,7 +30,7 @@ func CheckUserLoginMiddleware() func(c *gin.Context) {
 		if err != nil {
 			log.Printf("[system][CheckUserLoginMiddleware] user id wrong, token:%s", token)
 			c.Abort()
-			c.JSON(http.StatusOK, constants.TOKEN_WRONG_ERROR.ChangeToResp(nil))
+			c.JSON(http.StatusOK, errors.TOKEN_WRONG_ERROR.ChangeToResp(nil))
 			return
 		}
 		user := &model.User{}
@@ -37,7 +38,7 @@ func CheckUserLoginMiddleware() func(c *gin.Context) {
 		if err != nil {
 			log.Printf("[system][CheckUserLoginMiddleware] user id wrong, token:%s", token)
 			c.Abort()
-			c.JSON(http.StatusOK, constants.TOKEN_WRONG_ERROR.ChangeToResp(nil))
+			c.JSON(http.StatusOK, errors.TOKEN_WRONG_ERROR.ChangeToResp(nil))
 			return
 		}
 

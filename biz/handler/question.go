@@ -4,6 +4,7 @@ import (
 	"github.com/gin-gonic/gin"
 	"log"
 	"street_stall/biz/constants"
+	"street_stall/biz/constants/errors"
 	"street_stall/biz/service"
 	"street_stall/biz/util"
 )
@@ -22,7 +23,7 @@ func SubmitQuestion(c *gin.Context) {
 	question, haveQuestion := param["question"]
 	if !haveQuestion {
 		log.Print("[service][question][SubmitQuestion] there is no question")
-		panic(constants.REQUEST_TYPE_ERROR)
+		panic(errors.REQUEST_TYPE_ERROR)
 	}
 
 	insertedQuestion := service.SaveQuestionByCurrentUser(c, question)

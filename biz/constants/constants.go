@@ -15,7 +15,6 @@ const (
 )
 
 // 订单状态
-// todo  0（）/1（使用中）/2（）/3（）
 const (
 	ORDER_STATUS_TO_BE_USED = 1 // 待使用
 	ORDER_STATUS_IN_USING   = 2 // 使用中

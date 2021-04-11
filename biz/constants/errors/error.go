@@ -1,8 +1,9 @@
-package constants
+package errors
 
 import (
 	"fmt"
 	"github.com/gin-gonic/gin"
+	"street_stall/biz/constants"
 )
 
 // Error 自定义错误类型
@@ -18,8 +19,8 @@ func (e *Error) Error() string {
 // ChangeToResp 根据错误和传入的data生成标准响应
 func (e *Error) ChangeToResp(dateInterface interface{}) gin.H {
 	return gin.H{
-		CODE:          e.Code,
-		ERROR_MESSAGE: e.ErrorMessage,
-		DATA:          dateInterface,
+		constants.CODE:          e.Code,
+		constants.ERROR_MESSAGE: e.ErrorMessage,
+		constants.DATA:          dateInterface,
 	}
 }

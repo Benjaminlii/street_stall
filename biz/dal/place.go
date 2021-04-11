@@ -3,16 +3,16 @@ package dal
 import (
 	"github.com/jinzhu/gorm"
 	"log"
-	"street_stall/biz/constants"
+	"street_stall/biz/constants/errors"
 	"street_stall/biz/domain/model"
 )
 
 // GetPlaceById 根据placeId查询place
 func GetPlaceById(placeId uint) *model.Place {
 	place := selectPlace(filterById(GetDB(), placeId))
-	if place == nil{
+	if place == nil {
 		log.Printf("[service][place][GetPlaceById] place is not exist, placeId:%d", placeId)
-		panic(constants.NULL_ERROR)
+		panic(errors.NULL_ERROR)
 	}
 	return place
 }
@@ -33,7 +33,7 @@ func selectPlace(db *gorm.DB) *model.Place {
 		if err == gorm.ErrRecordNotFound {
 			return nil
 		} else {
-			panic(constants.SYSTEM_ERROR)
+			panic(errors.SYSTEM_ERROR)
 		}
 	}
 

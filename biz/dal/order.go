@@ -15,6 +15,15 @@ func GetAllTodayOrderByLocationId(locationId uint) []model.Order {
 	return orders
 }
 
+// GetOrderByMerchantIdOrderByCreatedAtDesc 根据merchantId查询其预约单，按照createdAt降序排列
+func GetOrderByMerchantIdOrderByCreatedAtDesc(merchantId uint) (orders []model.Order) {
+	db := GetDB()
+	db = filterByMerchantId(db, merchantId)
+	db = orderByCreatedAt(db, true)
+	db.Find(&orders)
+	return orders
+}
+
 // InsertOrder 插入一个order对象
 func InsertOrder(insertOrder *model.Order) *model.Order {
 	db := GetDB()
@@ -28,6 +37,12 @@ func InsertOrder(insertOrder *model.Order) *model.Order {
 // filterByLocationId 通过摊位Id过滤
 func filterByLocationId(db *gorm.DB, locationId uint) *gorm.DB {
 	db = db.Where("location_id = ?", locationId)
+	return db
+}
+
+// filterByMerchantId 通过商户Id过滤
+func filterByMerchantId(db *gorm.DB, merchantId uint) *gorm.DB {
+	db = db.Where("merchant_id = ?", merchantId)
 	return db
 }
 

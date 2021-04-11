@@ -4,6 +4,7 @@ import (
 	"github.com/gin-gonic/gin"
 	"log"
 	"street_stall/biz/constants"
+	"street_stall/biz/constants/errors"
 	"street_stall/biz/dal"
 	"street_stall/biz/drivers"
 	"street_stall/biz/service"
@@ -25,13 +26,13 @@ func SignIn(c *gin.Context) {
 	password, havePassword := param["password"]
 	if !(haveUsername && havePassword) {
 		log.Printf("[service][user][SignIn] request type error, err:%s", err)
-		panic(constants.REQUEST_TYPE_ERROR)
+		panic(errors.REQUEST_TYPE_ERROR)
 	}
 
 	// 校验用户信息
 	user := service.SelectUser(username, password)
-	if user == nil{
-		panic(constants.LOGIN_FAILD_ERROR)
+	if user == nil {
+		panic(errors.LOGIN_FAILD_ERROR)
 	}
 
 	// 生成并添加token到redis，存储user的json
@@ -62,14 +63,13 @@ func SignUp(c *gin.Context) {
 	categoryStr, haveCategory := param["category"]
 	if !(haveUsername && havePassword && haveName && haveUserIdentity && haveCategory) {
 		log.Print("[service][user][SignUp] has nil in username, password, name, userIdentity and category")
-		panic(constants.REQUEST_TYPE_ERROR)
+		panic(errors.REQUEST_TYPE_ERROR)
 	}
 	userIdentity := util.StringToUInt(userIdentityStr)
 	category := util.StringToUInt(categoryStr)
 
 	// 注册
 	user := service.SignUp(username, password, name, userIdentity, category)
-
 
 	// 生成并添加token到redis，存储user的json
 	token := util.AddUserToken(user)
@@ -97,25 +97,24 @@ func UpdateMerchant(c *gin.Context) {
 	introduction, haveIntroduction := param["info"]
 	if !(haveName && haveCategory && haveIntroduction) {
 		log.Print("[service][user][UpdateMerchant] has nil in name, category and introduction")
-		panic(constants.REQUEST_TYPE_ERROR)
+		panic(errors.REQUEST_TYPE_ERROR)
 	}
 	category := util.StringToUInt(categoryStr)
 
 	// 更新商户信息
 	merchant := service.UpdateMerchantByUserId(c, name, category, introduction)
 
-
 	// 设置请求响应
 	user := dal.GetUserById(merchant.UserId)
 	if user == nil {
-		panic(constants.SYSTEM_ERROR)
+		panic(errors.SYSTEM_ERROR)
 	}
 	respMap := map[string]interface{}{
 		"name":         merchant.Name,
 		"category":     merchant.Category,
 		"introduction": merchant.Introduction,
 		"user": map[string]interface{}{
-			"username":     user.Username,
+			"username":      user.Username,
 			"user_identity": user.UserIdentity,
 		},
 	}
@@ -138,7 +137,7 @@ func UpdateVisitor(c *gin.Context) {
 	introduction, haveIntroduction := param["info"]
 	if !(haveName && haveIntroduction) {
 		log.Print("[service][user][UpdateVisitor] has nil in name and introduction")
-		panic(constants.REQUEST_TYPE_ERROR)
+		panic(errors.REQUEST_TYPE_ERROR)
 	}
 
 	// 更新游客信息
@@ -146,14 +145,14 @@ func UpdateVisitor(c *gin.Context) {
 
 	// 设置请求响应
 	user := dal.GetUserById(merchant.UserId)
-	if user == nil{
-		panic(constants.SYSTEM_ERROR)
+	if user == nil {
+		panic(errors.SYSTEM_ERROR)
 	}
 	respMap := map[string]interface{}{
 		"name":         merchant.Name,
 		"introduction": merchant.Introduction,
 		"user": map[string]interface{}{
-			"username":     user.Username,
+			"username":      user.Username,
 			"user_identity": user.UserIdentity,
 		},
 	}
@@ -169,14 +168,14 @@ func GetVisitor(c *gin.Context) {
 
 	// 设置请求响应
 	user := dal.GetUserById(visitor.UserId)
-	if user == nil{
-		panic(constants.SYSTEM_ERROR)
+	if user == nil {
+		panic(errors.SYSTEM_ERROR)
 	}
 	respMap := map[string]interface{}{
 		"name":         visitor.Name,
 		"introduction": visitor.Introduction,
 		"user": map[string]interface{}{
-			"username":     user.Username,
+			"username":      user.Username,
 			"user_identity": user.UserIdentity,
 		},
 	}
@@ -192,14 +191,14 @@ func GetMerchant(c *gin.Context) {
 
 	// 设置请求响应
 	user := dal.GetUserById(merchant.UserId)
-	if user == nil{
-		panic(constants.SYSTEM_ERROR)
+	if user == nil {
+		panic(errors.SYSTEM_ERROR)
 	}
 	respMap := map[string]interface{}{
 		"name":         merchant.Name,
 		"introduction": merchant.Introduction,
 		"user": map[string]interface{}{
-			"username":     user.Username,
+			"username":      user.Username,
 			"user_identity": user.UserIdentity,
 		},
 	}
@@ -215,7 +214,7 @@ func SignOut(c *gin.Context) {
 	token := c.Request.Header["Token"][0]
 	if token == "" {
 		log.Printf("[service][user][SignOut] no token")
-		panic(constants.NO_TOKEN_ERROR)
+		panic(errors.NO_TOKEN_ERROR)
 	}
 	deleteCount, err := drivers.RedisClient.Del(constants.REDIS_USER_TOKEN_PRE + token).Result()
 	if err != nil {
@@ -224,7 +223,7 @@ func SignOut(c *gin.Context) {
 	}
 	if deleteCount != 1 {
 		log.Printf("[service][user][SignOut] delete redis count is 0")
-		panic(constants.SYSTEM_ERROR)
+		panic(errors.SYSTEM_ERROR)
 	}
 	// 设置请求响应
 	respMap := map[string]interface{}{}

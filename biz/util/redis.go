@@ -4,6 +4,7 @@ import (
 	"encoding/json"
 	"log"
 	"street_stall/biz/constants"
+	"street_stall/biz/constants/errors"
 	"street_stall/biz/domain/model"
 	"street_stall/biz/drivers"
 	"time"
@@ -17,7 +18,7 @@ func AddUserToken(user *model.User) (token string) {
 	userJson, err := json.Marshal(user)
 	if err != nil {
 		log.Printf("[system][redis] json marshal error, err:%s", err)
-		panic(constants.JSON_ERROR)
+		panic(errors.JSON_ERROR)
 	}
 	drivers.RedisClient.Set(constants.REDIS_USER_TOKEN_PRE+token, userJson, time.Hour*24*3)
 	return token

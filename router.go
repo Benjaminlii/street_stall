@@ -44,6 +44,12 @@ func register(r *gin.Engine) {
 		location.POST("/reserve", handler.Reserve)
 	}
 
+	// 预约单管理模块
+	order := streetStall.Group("/order")
+	{
+		order.POST("/get_orders", handler.GetOrders)
+	}
+
 	ping := streetStall.Group("/ping")
 	{
 		ping.POST("/ping", handler.Ping)

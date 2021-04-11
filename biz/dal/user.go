@@ -3,7 +3,7 @@ package dal
 import (
 	"github.com/jinzhu/gorm"
 	"log"
-	"street_stall/biz/constants"
+	"street_stall/biz/constants/errors"
 	"street_stall/biz/domain/model"
 )
 
@@ -42,7 +42,7 @@ func selectUser(db *gorm.DB) *model.User {
 		if err == gorm.ErrRecordNotFound {
 			return nil
 		} else {
-			panic(constants.SYSTEM_ERROR)
+			panic(errors.SYSTEM_ERROR)
 		}
 	}
 

@@ -4,6 +4,7 @@ import (
 	"github.com/gin-gonic/gin"
 	"log"
 	"street_stall/biz/constants"
+	"street_stall/biz/constants/errors"
 	"street_stall/biz/dal"
 	"street_stall/biz/domain/model"
 	"street_stall/biz/util"
@@ -50,7 +51,7 @@ func SignUp(username string, password string, name string, userIdentity uint, ca
 		visitor = dal.InsertVisitor(visitor)
 		if visitor == nil {
 			log.Print("[service][user][SignUp] InsertVisitor fail")
-			panic(constants.SYSTEM_ERROR)
+			panic(errors.SYSTEM_ERROR)
 		}
 	}
 
@@ -77,7 +78,7 @@ func GetMerchantByCurrentUser(c *gin.Context) *model.Merchant {
 
 	if currentUser.UserIdentity != constants.USERIDENTITY_MERCHANT {
 		log.Printf("[service][merchant][GetVisitorByCurrentUser] current user is not a merchant")
-		panic(constants.AUTHORITY_ERROR)
+		panic(errors.AUTHORITY_ERROR)
 	}
 
 	merchant := dal.GetMerchantByUserId(currentUser.ID)
@@ -103,7 +104,7 @@ func GetVisitorByCurrentUser(c *gin.Context) *model.Visitor {
 	currentUser := util.GetCurrentUser(c)
 	if currentUser.UserIdentity != constants.USERIDENTITY_VISITER {
 		log.Printf("[service][merchant][GetVisitorByCurrentUser] current user is not a visitor")
-		panic(constants.AUTHORITY_ERROR)
+		panic(errors.AUTHORITY_ERROR)
 	}
 
 	visitor := dal.GetVisitorByUserId(currentUser.ID)

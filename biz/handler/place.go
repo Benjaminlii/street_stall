@@ -4,6 +4,7 @@ import (
 	"github.com/gin-gonic/gin"
 	"log"
 	"street_stall/biz/constants"
+	"street_stall/biz/constants/errors"
 	"street_stall/biz/service"
 	"street_stall/biz/util"
 )
@@ -24,7 +25,7 @@ func GetPlaceNameToIdMap(c *gin.Context) {
 }
 
 // GetLocationMap 获取某地区的摊位map
-func GetLocationMap(c *gin.Context){
+func GetLocationMap(c *gin.Context) {
 	defer util.SetResponse(c)
 
 	// 解析请求参数
@@ -37,7 +38,7 @@ func GetLocationMap(c *gin.Context){
 	placeIdStr, havePlaceId := param["placeId"]
 	if !havePlaceId {
 		log.Print("[service][question][SubmitQuestion] there is no place id")
-		panic(constants.REQUEST_TYPE_ERROR)
+		panic(errors.REQUEST_TYPE_ERROR)
 	}
 	placeId := util.StringToUInt(placeIdStr)
 
