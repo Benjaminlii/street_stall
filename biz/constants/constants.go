@@ -9,9 +9,12 @@ const (
 
 // 商户分类
 const (
-	CATEGORY_CULTURE  = 1 // 文化类
-	CATEGORY_FOOD     = 2 // 美食类
-	CATEGORY_LOCATION = 3 // 地域特色类
+	CATEGORY_CULTURE      = 1 // 文化类
+	CATEGORY_CULTURE_STR  = "文化类"
+	CATEGORY_FOOD         = 2 // 美食类
+	CATEGORY_FOOD_STR     = "美食类"
+	CATEGORY_LOCATION     = 3 // 地域特色类
+	CATEGORY_LOCATION_STR = "地域特色类"
 )
 
 // 订单状态
@@ -61,5 +64,6 @@ const (
 
 // Redis相关
 const (
-	REDIS_USER_TOKEN_PRE = "street_stall_user_token_" // 当前登录的用户在redis中存储有过期时间键的key前缀
+	REDIS_USER_TOKEN_PRE              = "street_stall_user_token_"              // 当前登录的用户在redis中存储有过期时间键的key前缀
+	REDIS_CURRENT_ACTIVE_MERCHANT_PRE = "STREET_STALL_CURRENT_ACTIVE_MERCHANT_" // 当前活跃商家id（预约并打卡）
 )

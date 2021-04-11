@@ -41,26 +41,32 @@ func Reserve(c *gin.Context) {
 	c.Set(constants.DATA, respMap)
 }
 
-// GetMerchantsByPlaceId 通过区域（+分类）获取摊位上的商户信息，当前时刻（游客端）
-func GetMerchantsByPlaceId(c *gin.Context) {
+// GetMerchantsInfoByNameAndPlaceId 通过当前时刻商户名称获取商户信息，商户分类可选
+func GetMerchantsInfoByNameAndPlaceId(c *gin.Context) {
 	defer util.SetResponse(c)
 
 	// 解析请求参数
 	param := make(map[string]string)
 	err := c.BindJSON(&param)
 	if err != nil {
-		log.Printf("[service][location][GetMerchantsByPlaceId] request type error, err:%s", err)
+		log.Printf("[service][location][GetMerchantsInfoByNameAndPlaceId] request type error, err:%s", err)
 		panic(err)
 	}
 	placeIdStr, havePlaceId := param["place_id"]
 	categoryStr, haveCategory := param["category"]
-	if !(havePlaceId && haveCategory) {
-		log.Printf("[service][location][GetMerchantsByPlaceId] request type error, err:%s", err)
+	merchantName, haveMerchantName := param["merchant_name"]
+	if !(havePlaceId && haveCategory && haveMerchantName) {
+		log.Printf("[service][location][GetMerchantsInfoByNameAndPlaceId] request type error, err:%s", err)
 		panic(errors.REQUEST_TYPE_ERROR)
 	}
 	placeId := util.StringToUInt(placeIdStr)
 	category := util.StringToUInt(categoryStr)
 
-	service.GetMerchantsByPlaceId(c, placeId, category)
-	// todo
+	ans := service.GetMerchantsInfoByNameAndPlaceId(c, placeId, merchantName, category)
+
+	// 设置请求响应
+	respMap := map[string]interface{}{
+		"merchants": ans,
+	}
+	c.Set(constants.DATA, respMap)
 }

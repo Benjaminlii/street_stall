@@ -40,8 +40,3 @@ func Reserve(c *gin.Context, placeId uint, locationId uint, reserveTime uint, co
 
 	return insertOrder
 }
-
-// GetMerchantsByPlaceId 通过区域（+分类）获取摊位上的商户信息，当前时刻（游客端）
-func GetMerchantsByPlaceId(c *gin.Context, placeId uint, category uint) {
-	// todo
-}

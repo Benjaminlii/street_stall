@@ -42,6 +42,7 @@ func register(r *gin.Engine) {
 	location := streetStall.Group("/location")
 	{
 		location.POST("/reserve", handler.Reserve)
+		location.POST("/get_merchant_info_by_merchant_name", handler.GetMerchantsInfoByNameAndPlaceId)
 	}
 
 	// 预约单管理模块
