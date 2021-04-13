@@ -43,6 +43,20 @@ func GetOrderById(orderId uint) *model.Order {
 	return order
 }
 
+// GetTodayOrderByStatusAndReserveTime 获取当前某个预约时间段内，某个状态的预约单，也可次查询前一天的
+func GetTodayOrderByStatusAndReserveTime(status int, reserveTime uint, ifYesterday bool) []model.Order {
+	db := GetDB()
+	db = filterByStatus(db, status)
+	db = filterByReserveTime(db, reserveTime)
+	if ifYesterday {
+		db = filterByOneDayCreated(db)
+	} else {
+		db = filterByTodayCreated(db)
+	}
+	orders := findOrder(db)
+	return orders
+}
+
 // SaveOrder 更新并覆盖order
 func SaveOrder(order *model.Order) {
 	db := GetDB()
@@ -58,6 +72,18 @@ func filterByLocationId(db *gorm.DB, locationId uint) *gorm.DB {
 // filterByMerchantId 通过商户Id过滤
 func filterByMerchantId(db *gorm.DB, merchantId uint) *gorm.DB {
 	db = db.Where("merchant_id = ?", merchantId)
+	return db
+}
+
+// filterByStatus 通过预约单的状态过滤
+func filterByStatus(db *gorm.DB, status int) *gorm.DB {
+	db = db.Where("status = ?", status)
+	return db
+}
+
+// filterByReserveTime 通过预约单的预约时间过滤
+func filterByReserveTime(db *gorm.DB, reserveTime uint) *gorm.DB {
+	db = db.Where("reserve_time = ?", reserveTime)
 	return db
 }
 

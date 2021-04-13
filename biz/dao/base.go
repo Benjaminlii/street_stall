@@ -3,7 +3,7 @@ package dao
 import (
 	"github.com/jinzhu/gorm"
 	"street_stall/biz/drivers"
-	"time"
+	"street_stall/biz/util"
 )
 
 func GetDB() *gorm.DB {
@@ -12,11 +12,20 @@ func GetDB() *gorm.DB {
 
 // filterByTodayCreated 按照时间过滤今天创建的
 func filterByTodayCreated(db *gorm.DB) *gorm.DB {
-	currentTime := time.Now()
-	todayFirstSecond := time.Date(currentTime.Year(), currentTime.Month(), currentTime.Day(), 0, 0, 0, 0, currentTime.Location()).Unix()
-	todayLastSecond := time.Date(currentTime.Year(), currentTime.Month(), currentTime.Day(), 23, 59, 59, 0, currentTime.Location()).Unix()
+	todayFirstSecond := util.GetTodayFirstSecond()
+	todayLastSecond := util.GetTodayLastSecond()
 
 	db = db.Where("created_at between ? and ?", todayFirstSecond, todayLastSecond)
+	return db
+}
+
+// filterByOneDayCreated 按照时间过滤某一天创建的
+func filterByOneDayCreated(db *gorm.DB) *gorm.DB {
+	yesterday := util.GetYesterdayTime()
+	oneDayFirstSecond := util.GetOneDayFirstSecond(yesterday)
+	oneDayLastSecond := util.GetOneDayLastSecond(yesterday)
+
+	db = db.Where("created_at between ? and ?", oneDayFirstSecond, oneDayLastSecond)
 	return db
 }
 

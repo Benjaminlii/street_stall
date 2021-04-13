@@ -78,9 +78,8 @@ func ClockIn(c *gin.Context, orderId uint) {
 	}
 
 	// 校验时间
-	currentTime := time.Now()
 	reserveTimeInt := int(order.ReserveTime)
-	todayFirstSecond := time.Date(currentTime.Year(), currentTime.Month(), currentTime.Day(), 0, 0, 0, 0, currentTime.Location())
+	todayFirstSecond := util.GetTodayFirstSecond()
 	currentHour := time.Now().Hour()
 	// 校验当前小时大于预约时间，并且小于预约时间+2，并且订单的创建时间是今天
 	if !(currentHour > reserveTimeInt &&
