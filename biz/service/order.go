@@ -95,5 +95,4 @@ func ClockIn(c *gin.Context, orderId uint) {
 	dao.SaveOrder(order)
 	// 同步redis，将当前商户的id添加到redis中当前地区活跃摆摊的set中
 	drivers.RedisClient.SAdd(fmt.Sprintf("%s%d", constants.REDIS_CURRENT_ACTIVE_MERCHANT_PRE, order.PlaceId), merchant.ID)
-	// todo redis刷新定时任务，order更新状态定时任务（状态从使用中到完成）
 }
