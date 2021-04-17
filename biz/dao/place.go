@@ -27,8 +27,8 @@ func AllPlace() (places []model.Place) {
 // selectPlace 根据db去查询place模型
 func selectPlace(db *gorm.DB) *model.Place {
 	place := &model.Place{}
-	db.First(place)
-	if err := db.Error; err != nil {
+	result := db.First(place)
+	if err := result.Error; err != nil {
 		log.Printf("[service][place][selectPlace] db select error, err:%s", err)
 		if err == gorm.ErrRecordNotFound {
 			return nil

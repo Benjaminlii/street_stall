@@ -31,8 +31,8 @@ func findLocation(db *gorm.DB) (locations []model.Location) {
 // selectLocation 查询location
 func selectLocation(db *gorm.DB) *model.Location {
 	location := &model.Location{}
-	db = db.First(location)
-	if err := db.Error; err != nil {
+	result := db.First(location)
+	if err := result.Error; err != nil {
 		log.Printf("[service][location][selectLocation] db select error, err:%s", err)
 		panic(err)
 	}

@@ -36,8 +36,8 @@ func InsertUser(insertUser *model.User) *model.User {
 // selectUser 根据db去查询user模型
 func selectUser(db *gorm.DB) *model.User {
 	user := &model.User{}
-	db.First(user)
-	if err := db.Error; err != nil {
+	result := db.First(user)
+	if err := result.Error; err != nil {
 		log.Printf("[service][user][selectUser] db select error, err:%s", err)
 		if err == gorm.ErrRecordNotFound {
 			return nil

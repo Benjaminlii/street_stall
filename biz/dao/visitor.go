@@ -34,8 +34,8 @@ func SaveVisitor(visitor *model.Visitor) {
 // selectVisitor 查询visitor
 func selectVisitor(db *gorm.DB) *model.Visitor {
 	visitor := &model.Visitor{}
-	db = db.First(visitor)
-	if err := db.Error; err != nil {
+	result := db.First(visitor)
+	if err := result.Error; err != nil {
 		log.Printf("[service][visitor][selectVisitor] db select error, err:%s", err)
 	}
 	return visitor

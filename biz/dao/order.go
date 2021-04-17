@@ -96,8 +96,8 @@ func findOrder(db *gorm.DB) (ans []model.Order) {
 // selectOrder 根据db去查询order模型
 func selectOrder(db *gorm.DB) *model.Order {
 	order := &model.Order{}
-	db.First(order)
-	if err := db.Error; err != nil {
+	result := db.First(order)
+	if err := result.Error; err != nil {
 		log.Printf("[service][order][selectOrder] db select error, err:%s", err)
 		if err == gorm.ErrRecordNotFound {
 			return nil

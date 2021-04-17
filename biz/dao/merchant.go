@@ -68,8 +68,8 @@ func filterByCategory(db *gorm.DB, category uint) *gorm.DB {
 // selectMerchant 查询merchant
 func selectMerchant(db *gorm.DB) *model.Merchant {
 	merchant := &model.Merchant{}
-	db = db.First(merchant)
-	if err := db.Error; err != nil {
+	result := db.First(merchant)
+	if err := result.Error; err != nil {
 		log.Printf("[service][merchant][selectMerchant] db select error, err:%s", err)
 		panic(err)
 	}

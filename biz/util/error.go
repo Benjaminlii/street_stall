@@ -26,7 +26,7 @@ func SetResponse(c *gin.Context) {
 	resp := errors.SUCCESS.ChangeToResp(dataInterface)
 	if err := recover(); err != nil {
 		// 已定义错误
-		if myError, isOk := err.(errors.Error); isOk {
+		if myError, isOk := err.(*errors.Error); isOk {
 			resp = myError.ChangeToResp(dataInterface)
 		} else {
 			resp = errors.OTHER_ERROR.ChangeToResp(dataInterface)
