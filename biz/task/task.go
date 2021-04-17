@@ -19,8 +19,14 @@ var (
 func InitTask() {
 	once.Do(func() {
 		c := cron.New()
-		c.AddFunc("0 0 0/2 * * ? *", taskDeleteCurrentMerchantEveryTwoHour)
-		c.AddFunc("0 0 0/2 * * ? *", taskUpdateOrderEveryTwoHour)
+		err := c.AddFunc("0 0 0/2 * * ? *", taskDeleteCurrentMerchantEveryTwoHour)
+		if err != nil {
+			log.Printf("[system][task][InitTask] add task error, task name is:taskDeleteCurrentMerchantEveryTwoHour")
+		}
+		err = c.AddFunc("0 0 0/2 * * ? *", taskUpdateOrderEveryTwoHour)
+		if err != nil {
+			log.Printf("[system][task][InitTask] add task error, task name is:taskUpdateOrderEveryTwoHour")
+		}
 		c.Start()
 
 		log.Println("[system][task][InitTask] init task success!")
@@ -73,7 +79,9 @@ func taskDeleteCurrentMerchantEveryTwoHour() {
 	log.Printf("[system][task][taskDeleteCurrentMerchantEveryTwoHour] task end, used cesond:%s", usedSecond)
 }
 
-// taskUpdateOrderEveryTwoHour,order更新状态定时任务（状态从使用中到完成）,每两个小时将redis中正在摆摊的预约项更新为已完成
+// taskUpdateOrderEveryTwoHour,order更新状态定时任务（状态从使用中到完成）
+// 每两个小时将redis中正在摆摊的预约项更新为已完成（即 使用中 -> 到时间 -> 已完成）
+// 将未打卡的预约项更新为过期（即 待使用 -> 到时间 -> 过期）
 func taskUpdateOrderEveryTwoHour() {
 	time1 := time.Now()
 	log.Printf("[system][task][taskUpdateOrderEveryTwoHour] task start, current time:%s", time1)
@@ -103,7 +111,15 @@ func taskUpdateOrderEveryTwoHour() {
 	orders := dao.GetTodayOrderByStatusAndReserveTime(constants.ORDER_STATUS_IN_USING, rightHour, ifYesterday)
 	// 更新
 	for _, order := range orders {
-		order.Status = constants.ORDER_STATUS_FINISHED
+		status := constants.ORDER_STATUS_FINISHED
+		if order.Status == constants.ORDER_STATUS_IN_USING {
+			// 使用中 -> 到时间 -> 已完成
+			status = constants.ORDER_STATUS_FINISHED
+		} else if order.Status == constants.ORDER_STATUS_TO_BE_USED {
+			// 待使用 -> 到时间 -> 过期
+			status = constants.ORDER_STATUS_EXPIRED
+		}
+		order.Status = status
 		dao.SaveOrder(&order)
 	}
 
