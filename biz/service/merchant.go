@@ -49,16 +49,11 @@ func GetMerchantsInfoByNameAndPlaceId(c *gin.Context, placeId uint, merchantName
 	return ans
 }
 
-// GetMerchantByLocationId 根据摊位id获取当前位置上商户的基础信息，包括商户名称，商户分类，星级评价，商户简介
-func GetMerchantByLocationId(c *gin.Context, placeId uint, numberOfPlace uint) map[string]string {
+// GetMerchantByMerchantId 根据id获取商户的基础信息，包括商户名称，商户分类，星级评价，商户简介
+func GetMerchantByMerchantId(c *gin.Context, merchantId uint) map[string]string {
 	ans := make(map[string]string, 4)
 
-	// 根据区域和偏移量获取摊位
-	location := dao.GetLocationByPlaceIdAndNumber(placeId, numberOfPlace)
-	// 根据摊位和当前时刻使用确定预约单
-	nowUsingOrder := dao.GetOrderByLocationIdNowInUsing(location.ID)
-	// 根据预约单得到对应的商户信息
-	merchant := dao.GetMerchantById(nowUsingOrder.MerchantId)
+	merchant := dao.GetMerchantById(merchantId)
 
 	ans["name"] = merchant.Name
 	ans["category"] = util.UintToCategoryString(merchant.Category)
@@ -66,4 +61,14 @@ func GetMerchantByLocationId(c *gin.Context, placeId uint, numberOfPlace uint) m
 	ans["introduction"] = merchant.Introduction
 
 	return ans
+}
+
+// GetMerchantByPlaceIdAndNumber 根据区域和偏移量获取当前位置上商户的基础信息，包括商户名称，商户分类，星级评价，商户简介
+func GetMerchantByPlaceIdAndNumber(c *gin.Context, placeId uint, numberOfPlace uint) map[string]string {
+	// 根据区域和偏移量获取摊位
+	location := dao.GetLocationByPlaceIdAndNumber(placeId, numberOfPlace)
+	// 根据摊位和当前时刻使用确定预约单
+	nowUsingOrder := dao.GetOrderByLocationIdNowInUsing(location.ID)
+	// 根据预约单得到对应的商户信息
+	return GetMerchantByMerchantId(c, nowUsingOrder.MerchantId)
 }

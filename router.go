@@ -56,7 +56,8 @@ func register(r *gin.Engine) {
 	// 商户管理模块
 	merchant := streetStall.Group("/merchant")
 	{
-		merchant.POST("/get_merchant_by_location_id", handler.GetMerchantByLocationId)
+		merchant.POST("/get_merchant_by_place_id_number", handler.GetMerchantByPlaceIdAndNumber)
+		merchant.POST("/get_merchant_by_merchant_id", handler.GetMerchantByMerchantId)
 	}
 	ping := streetStall.Group("/ping")
 	{

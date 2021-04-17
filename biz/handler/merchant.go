@@ -74,28 +74,51 @@ func UpdateMerchant(c *gin.Context) {
 	c.Set(constants.DATA, respMap)
 }
 
-// GetMerchantByLocationId 根据摊位id获取当前位置上商户的基础信息
-func GetMerchantByLocationId(c *gin.Context) {
+// GetMerchantByPlaceIdAndNumber 根据区域和偏移量获取当前位置上商户的基础信息
+func GetMerchantByPlaceIdAndNumber(c *gin.Context) {
 	defer util.SetResponse(c)
 
 	// 解析请求参数
 	param := make(map[string]string)
 	err := c.BindJSON(&param)
 	if err != nil {
-		log.Printf("[service][merchant][GetMerchantByLocationId] request type error, err:%s", err)
+		log.Printf("[service][merchant][GetMerchantByPlaceIdAndNumber] request type error, err:%s", err)
 		panic(err)
 	}
 	placeIdStr, havePlace := param["place_id"]
 	numberOfPlaceStr, haveNumberOfPlace := param["number_of_place"]
 	if !(havePlace && haveNumberOfPlace) {
-		log.Print("[service][merchant][GetMerchantByLocationId] has nil in placeId and numberOfPlace")
+		log.Print("[service][merchant][GetMerchantByPlaceIdAndNumber] has nil in placeId and numberOfPlace")
 		panic(errors.REQUEST_TYPE_ERROR)
 	}
 	placeId := util.StringToUInt(placeIdStr)
 	numberOfPlace := util.StringToUInt(numberOfPlaceStr)
 
-	// 更新商户信息
-	ans := service.GetMerchantByLocationId(c, placeId, numberOfPlace)
+	ans := service.GetMerchantByPlaceIdAndNumber(c, placeId, numberOfPlace)
+
+	// 设置请求响应
+	c.Set(constants.DATA, ans)
+}
+
+// GetMerchantByMerchantId 根据商户id获取基础信息
+func GetMerchantByMerchantId(c *gin.Context) {
+	defer util.SetResponse(c)
+
+	// 解析请求参数
+	param := make(map[string]string)
+	err := c.BindJSON(&param)
+	if err != nil {
+		log.Printf("[service][merchant][GetMerchantByMerchantId] request type error, err:%s", err)
+		panic(err)
+	}
+	merchantIdStr, haveMerchantId := param["merchant_id"]
+	if !haveMerchantId {
+		log.Print("[service][merchant][GetMerchantByMerchantId] merchantId is nil")
+		panic(errors.REQUEST_TYPE_ERROR)
+	}
+	merchantId := util.StringToUInt(merchantIdStr)
+
+	ans := service.GetMerchantByMerchantId(c, merchantId)
 
 	// 设置请求响应
 	c.Set(constants.DATA, ans)
