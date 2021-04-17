@@ -7,6 +7,7 @@ import (
 	"street_stall/biz/constants"
 	"street_stall/biz/constants/errors"
 	"street_stall/biz/dao"
+	"street_stall/biz/domain/model"
 	"street_stall/biz/drivers"
 	"street_stall/biz/util"
 )
@@ -71,4 +72,19 @@ func GetMerchantByPlaceIdAndNumber(c *gin.Context, placeId uint, numberOfPlace u
 	nowUsingOrder := dao.GetOrderByLocationIdNowInUsing(location.ID)
 	// 根据预约单得到对应的商户信息
 	return GetMerchantByMerchantId(c, nowUsingOrder.MerchantId)
+}
+
+// GetMerchantByCurrentUser 获取当前用户对应的商户
+func GetMerchantByCurrentUser(c *gin.Context) *model.Merchant {
+	// 获取user
+	currentUser := util.GetCurrentUser(c)
+
+	if currentUser.UserIdentity != constants.USERIDENTITY_MERCHANT {
+		log.Printf("[service][merchant][GetVisitorByCurrentUser] current user is not a merchant")
+		panic(errors.AUTHORITY_ERROR)
+	}
+
+	merchant := dao.GetMerchantByUserId(currentUser.ID)
+
+	return merchant
 }

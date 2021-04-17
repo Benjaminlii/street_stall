@@ -7,7 +7,6 @@ import (
 	"street_stall/biz/constants/errors"
 	"street_stall/biz/dao"
 	"street_stall/biz/domain/model"
-	"street_stall/biz/util"
 )
 
 // SelectUser 查询用户信息，用于登录
@@ -71,21 +70,6 @@ func UpdateMerchantByUserId(c *gin.Context, name string, category uint, introduc
 	return merchant
 }
 
-// GetMerchantByCurrentUser 获取当前用户对应的商户
-func GetMerchantByCurrentUser(c *gin.Context) *model.Merchant {
-	// 获取user
-	currentUser := util.GetCurrentUser(c)
-
-	if currentUser.UserIdentity != constants.USERIDENTITY_MERCHANT {
-		log.Printf("[service][merchant][GetVisitorByCurrentUser] current user is not a merchant")
-		panic(errors.AUTHORITY_ERROR)
-	}
-
-	merchant := dao.GetMerchantByUserId(currentUser.ID)
-
-	return merchant
-}
-
 // UpdateVisitorByUserId 通过userId选择游客，更新其字段信息
 func UpdateVisitorByUserId(c *gin.Context, name string, introduction string) *model.Visitor {
 	visitor := GetVisitorByCurrentUser(c)
@@ -94,20 +78,6 @@ func UpdateVisitorByUserId(c *gin.Context, name string, introduction string) *mo
 	visitor.Introduction = introduction
 
 	dao.SaveVisitor(visitor)
-
-	return visitor
-}
-
-// GetVisitorByCurrentUser 获取当前用户对应的游客
-func GetVisitorByCurrentUser(c *gin.Context) *model.Visitor {
-	// 获取user
-	currentUser := util.GetCurrentUser(c)
-	if currentUser.UserIdentity != constants.USERIDENTITY_VISITER {
-		log.Printf("[service][merchant][GetVisitorByCurrentUser] current user is not a visitor")
-		panic(errors.AUTHORITY_ERROR)
-	}
-
-	visitor := dao.GetVisitorByUserId(currentUser.ID)
 
 	return visitor
 }

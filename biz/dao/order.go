@@ -42,6 +42,7 @@ func InsertOrder(insertOrder *model.Order) *model.Order {
 	db.Create(insertOrder)
 	if err := db.Error; err != nil {
 		log.Printf("[service][order][insertOrder] db insert error, err:%s", err)
+		panic(err)
 	}
 	return insertOrder
 }

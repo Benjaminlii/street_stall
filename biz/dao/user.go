@@ -29,6 +29,7 @@ func InsertUser(insertUser *model.User) *model.User {
 	db.Create(insertUser)
 	if err := db.Error; err != nil {
 		log.Printf("[service][user][InsertUser] db insert error, err:%s", err)
+		panic(err)
 	}
 	return insertUser
 }
