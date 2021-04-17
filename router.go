@@ -50,6 +50,7 @@ func register(r *gin.Engine) {
 	{
 		order.POST("/get_orders", handler.GetOrders)
 		order.POST("/clock_in", handler.ClockIn)
+		order.POST("/quit_order", handler.QuitOrder)
 	}
 
 	ping := streetStall.Group("/ping")
