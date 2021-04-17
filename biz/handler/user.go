@@ -25,7 +25,7 @@ func SignIn(c *gin.Context) {
 	username, haveUsername := param["username"]
 	password, havePassword := param["password"]
 	if !(haveUsername && havePassword) {
-		log.Printf("[service][user][SignIn] request type error, err:%s", err)
+		log.Printf("[service][user][SignIn] has nil in username and password")
 		panic(errors.REQUEST_TYPE_ERROR)
 	}
 

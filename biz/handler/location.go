@@ -25,7 +25,7 @@ func Reserve(c *gin.Context) {
 	reserveTimeStr, haveReserveTime := param["reserve_time"]
 	comment, haveComment := param["comment"]
 	if !(havePlaceId && haveLocationId && haveReserveTime && haveComment) {
-		log.Printf("[service][location][Reserve] request type error, err:%s", err)
+		log.Printf("[service][location][Reserve] has nil in placeId, locationId, reserveTime and comment")
 		panic(errors.REQUEST_TYPE_ERROR)
 	}
 	placeId := util.StringToUInt(placeIdStr)
@@ -56,7 +56,7 @@ func GetMerchantsInfoByNameAndPlaceId(c *gin.Context) {
 	categoryStr, haveCategory := param["category"]
 	merchantName, haveMerchantName := param["merchant_name"]
 	if !(havePlaceId && haveCategory && haveMerchantName) {
-		log.Printf("[service][location][GetMerchantsInfoByNameAndPlaceId] request type error, err:%s", err)
+		log.Printf("[service][location][GetMerchantsInfoByNameAndPlaceId] has nil in placeId, category and merchantName")
 		panic(errors.REQUEST_TYPE_ERROR)
 	}
 	placeId := util.StringToUInt(placeIdStr)

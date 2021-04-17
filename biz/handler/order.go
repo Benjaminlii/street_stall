@@ -58,7 +58,7 @@ func QuitOrder(c *gin.Context) {
 	}
 	OrderIdStr, haveOrderId := param["order_id"]
 	if !haveOrderId {
-		log.Printf("[service][order][QuitOrder] request type error, err:%s", err)
+		log.Printf("[service][order][QuitOrder] orderId is nil")
 		panic(errors.REQUEST_TYPE_ERROR)
 	}
 	orderId := util.StringToUInt(OrderIdStr)

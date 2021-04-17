@@ -14,6 +14,14 @@ func GetVisitorByUserId(userId uint) *model.Visitor {
 	return visitor
 }
 
+// GetVisitorById 根据Id获取对应的visitor
+func GetVisitorById(id uint) *model.Visitor {
+	db := GetDB()
+	db = filterById(db, id)
+	visitor := selectVisitor(db)
+	return visitor
+}
+
 // InsertVisitor 插入一个visitor对象
 func InsertVisitor(insertVisitor *model.Visitor) *model.Visitor {
 	db := GetDB()
