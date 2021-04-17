@@ -81,47 +81,6 @@ func SignUp(c *gin.Context) {
 	c.Set(constants.DATA, respMap)
 }
 
-// UpdateMerchant 商户信息维护
-func UpdateMerchant(c *gin.Context) {
-	defer util.SetResponse(c)
-
-	// 解析请求参数
-	param := make(map[string]string)
-	err := c.BindJSON(&param)
-	if err != nil {
-		log.Printf("[service][user][UpdateMerchant] request type error, err:%s", err)
-		panic(err)
-	}
-	name, haveName := param["name"]
-	categoryStr, haveCategory := param["category"]
-	introduction, haveIntroduction := param["info"]
-	if !(haveName && haveCategory && haveIntroduction) {
-		log.Print("[service][user][UpdateMerchant] has nil in name, category and introduction")
-		panic(errors.REQUEST_TYPE_ERROR)
-	}
-	category := util.StringToUInt(categoryStr)
-
-	// 更新商户信息
-	merchant := service.UpdateMerchantByUserId(c, name, category, introduction)
-
-	// 设置请求响应
-	user := dao.GetUserById(merchant.UserId)
-	if user == nil {
-		panic(errors.SYSTEM_ERROR)
-	}
-	respMap := map[string]interface{}{
-		"name":         merchant.Name,
-		"category":     merchant.Category,
-		"introduction": merchant.Introduction,
-		"user": map[string]interface{}{
-			"username":      user.Username,
-			"user_identity": user.UserIdentity,
-		},
-	}
-
-	c.Set(constants.DATA, respMap)
-}
-
 // UpdateVisitor 游客信息维护
 func UpdateVisitor(c *gin.Context) {
 	defer util.SetResponse(c)
@@ -174,29 +133,6 @@ func GetVisitor(c *gin.Context) {
 	respMap := map[string]interface{}{
 		"name":         visitor.Name,
 		"introduction": visitor.Introduction,
-		"user": map[string]interface{}{
-			"username":      user.Username,
-			"user_identity": user.UserIdentity,
-		},
-	}
-
-	c.Set(constants.DATA, respMap)
-}
-
-// GetMerchant 得到当前商户信息
-func GetMerchant(c *gin.Context) {
-	defer util.SetResponse(c)
-
-	merchant := service.GetMerchantByCurrentUser(c)
-
-	// 设置请求响应
-	user := dao.GetUserById(merchant.UserId)
-	if user == nil {
-		panic(errors.SYSTEM_ERROR)
-	}
-	respMap := map[string]interface{}{
-		"name":         merchant.Name,
-		"introduction": merchant.Introduction,
 		"user": map[string]interface{}{
 			"username":      user.Username,
 			"user_identity": user.UserIdentity,

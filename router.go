@@ -53,6 +53,11 @@ func register(r *gin.Engine) {
 		order.POST("/quit_order", handler.QuitOrder)
 	}
 
+	// 商户管理模块
+	merchant := streetStall.Group("/merchant")
+	{
+		merchant.POST("/get_merchant_by_location_id", handler.GetMerchantByLocationId)
+	}
 	ping := streetStall.Group("/ping")
 	{
 		ping.POST("/ping", handler.Ping)

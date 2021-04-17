@@ -3,8 +3,10 @@ package dao
 import (
 	"github.com/jinzhu/gorm"
 	"log"
+	"street_stall/biz/constants"
 	"street_stall/biz/constants/errors"
 	"street_stall/biz/domain/model"
+	"time"
 )
 
 // GetAllTodayOrderByLocationId 查询某摊位当天的所有order
@@ -23,6 +25,15 @@ func GetOrderByMerchantIdOrderByCreatedAtDesc(merchantId uint) (orders []model.O
 	db = orderByCreatedAt(db, true)
 	db.Find(&orders)
 	return orders
+}
+
+// GetOrderByLocationIdNowInUsing 根据摊位id查询当前正在使用的预约单
+func GetOrderByLocationIdNowInUsing(locationId uint) *model.Order {
+	db := GetDB()
+	db = filterByNowUsing(db)
+	db = filterByLocationId(db, locationId)
+	order := selectOrder(db)
+	return order
 }
 
 // InsertOrder 插入一个order对象
@@ -84,6 +95,18 @@ func filterByStatus(db *gorm.DB, status int) *gorm.DB {
 // filterByReserveTime 通过预约单的预约时间过滤
 func filterByReserveTime(db *gorm.DB, reserveTime uint) *gorm.DB {
 	db = db.Where("reserve_time = ?", reserveTime)
+	return db
+}
+
+// filterByNowUsing 过滤当前时间正在被使用的预约单
+func filterByNowUsing(db *gorm.DB) *gorm.DB {
+	currentTimeHour := time.Now().Hour()
+	rightTimeHour := currentTimeHour
+	if currentTimeHour%2 != 0 {
+		rightTimeHour -= 0
+	}
+	db = filterByReserveTime(db, uint(rightTimeHour))
+	db = filterByStatus(db, constants.ORDER_STATUS_IN_USING)
 	return db
 }
 

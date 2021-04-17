@@ -22,6 +22,15 @@ func GetLocationById(locationId uint) *model.Location {
 	return location
 }
 
+// GetLocationByPlaceIdAndNumber 根据区域id和偏移量获取摊位
+func GetLocationByPlaceIdAndNumber(placeId uint, number uint) *model.Location {
+	db := GetDB()
+	db = filterByPlaceId(db, placeId)
+	db = filterByNumber(db, number)
+	location := selectLocation(db)
+	return location
+}
+
 // findLocation 根据传入的db查询Location
 func findLocation(db *gorm.DB) (locations []model.Location) {
 	db.Find(&locations)
@@ -42,5 +51,11 @@ func selectLocation(db *gorm.DB) *model.Location {
 // filterByPlaceId 通过placeId过滤
 func filterByPlaceId(db *gorm.DB, placeId uint) *gorm.DB {
 	db = db.Where("place_id = ?", placeId)
+	return db
+}
+
+// filterByNumber 通过Number过滤
+func filterByNumber(db *gorm.DB, Number uint) *gorm.DB {
+	db = db.Where("Number = ?", Number)
 	return db
 }

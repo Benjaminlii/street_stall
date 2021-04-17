@@ -15,6 +15,14 @@ func GetMerchantByUserId(userId uint) *model.Merchant {
 	return merchant
 }
 
+// GetMerchantById 根据merchantId获取merchant
+func GetMerchantById(merchantId uint) *model.Merchant {
+	db := GetDB()
+	db = filterById(db, merchantId)
+	merchant := selectMerchant(db)
+	return merchant
+}
+
 // InsertMerchant 插入一个merchant对象
 func InsertMerchant(insertMerchant *model.Merchant) *model.Merchant {
 	db := GetDB()

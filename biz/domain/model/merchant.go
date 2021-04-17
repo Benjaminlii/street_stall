@@ -16,3 +16,8 @@ type Merchant struct {
 	CommentCount uint   `gorm:"column:comment_count"`  // 累计评价数
 	Introduction string `gorm:"column:introduction"`   // 商户简介
 }
+
+// GetStar 获取该商户的星级评价
+func (m *Merchant) GetStar() float64 {
+	return float64(m.StarSum) / float64(m.CommentCount*1.0)
+}
