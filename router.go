@@ -58,6 +58,7 @@ func register(r *gin.Engine) {
 	{
 		merchant.POST("/get_merchant_by_place_id_number", handler.GetMerchantByPlaceIdAndNumber)
 		merchant.POST("/get_merchant_by_merchant_id", handler.GetMerchantByMerchantId)
+		merchant.POST("/get_merchants_by_place_id", handler.GetMerchantsByPlaceId)
 	}
 
 	evaluation := streetStall.Group("/evaluation")

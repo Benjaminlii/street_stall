@@ -10,6 +10,7 @@ var OUTSIDE_ERROR = &Error{Code: 20003, ErrorMessage: "外部系统错误！"}
 var OTHER_ERROR = &Error{Code: 20004, ErrorMessage: "其他未知错误:"}
 var JSON_ERROR = &Error{Code: 20005, ErrorMessage: "JSON数据格式转化错误！"}
 var LOCK_ERROR = &Error{Code: 20006, ErrorMessage: "获取分布式锁失败！"}
+var DB_LIMIT_ERROR = &Error{Code: 20007, ErrorMessage: "数据库分页查询失败，请检查分页参数！"}
 
 // 业务错误
 var TOKEN_WRONG_ERROR = &Error{Code: 30001, ErrorMessage: "token无效！"}

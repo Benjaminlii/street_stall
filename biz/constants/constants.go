@@ -65,7 +65,7 @@ const (
 // Redis相关
 const (
 	REDIS_USER_TOKEN_PRE              = "street_stall_user_token_"              // 当前登录的用户在redis中存储有过期时间键的key前缀
-	REDIS_CURRENT_ACTIVE_MERCHANT_PRE = "STREET_STALL_CURRENT_ACTIVE_MERCHANT_" // 当前活跃商家id（预约并打卡）
+	REDIS_CURRENT_ACTIVE_MERCHANT_PRE = "STREET_STALL_CURRENT_ACTIVE_MERCHANT_" // 当前活跃商家id-摊位id的hash（预约并打卡）
 	REDIS_LOCK_KEY_PRE                = "street_stall_redis_lock_key_"          // redis分布式锁key
 	REDIS_DEFAULT_VALUE               = "0"                                     // redis无需存储value的value值
 )

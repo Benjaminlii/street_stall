@@ -94,7 +94,8 @@ func ClockIn(c *gin.Context, orderId uint) {
 	order.Status = constants.ORDER_STATUS_IN_USING
 	dao.SaveOrder(order)
 	// 同步redis，将当前商户的id添加到redis中当前地区活跃摆摊的set中
-	drivers.RedisClient.SAdd(fmt.Sprintf("%s%d", constants.REDIS_CURRENT_ACTIVE_MERCHANT_PRE, order.PlaceId), merchant.ID)
+	key := fmt.Sprintf("%s%d", constants.REDIS_CURRENT_ACTIVE_MERCHANT_PRE, order.PlaceId)
+	drivers.RedisClient.HSet(key, util.UintToString(merchant.ID), order.LocationId)
 }
 
 // QuitOrder 商户退订预约单，即取消预约，需判断时间，预约单状态

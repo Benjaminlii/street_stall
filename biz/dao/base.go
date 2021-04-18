@@ -2,6 +2,7 @@ package dao
 
 import (
 	"github.com/jinzhu/gorm"
+	"street_stall/biz/constants/errors"
 	"street_stall/biz/drivers"
 	"street_stall/biz/util"
 )
@@ -42,6 +43,16 @@ func orderByCreatedAt(db *gorm.DB, isDesc bool) *gorm.DB {
 		db = db.Order("created_at DESC")
 	} else {
 		db = db.Order("created_at ASC")
+	}
+	return db
+}
+
+// limit 分页查询
+func limit(db *gorm.DB, offset uint, count uint) *gorm.DB {
+	if offset > 0 && count > 0 {
+		db = db.Limit(count).Offset((offset - 1) * count)
+	} else {
+		panic(errors.DB_LIMIT_ERROR)
 	}
 	return db
 }

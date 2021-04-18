@@ -123,3 +123,39 @@ func GetMerchantByMerchantId(c *gin.Context) {
 	// 设置请求响应
 	c.Set(constants.DATA, ans)
 }
+
+// GetMerchantsByPlaceId 根据区域id获取商家信息列表（按照星级降序排列，固定数量  15）
+func GetMerchantsByPlaceId(c *gin.Context) {
+	defer util.SetResponse(c)
+
+	// 解析请求参数
+	param := make(map[string]string)
+	err := c.BindJSON(&param)
+	if err != nil {
+		log.Printf("[service][merchant][GetMerchantsByPlaceId] request type error, err:%s", err)
+		panic(err)
+	}
+	placeIdStr, havePlaceId := param["place_id"]
+	categoryStr, haveCategory := param["category"]
+	isOrderByStartStr, haveIsOrderByStart := param["is_order_by_start"]
+	offsetStr, haveOffset := param["offset"]
+	countStr, haveCount := param["count"]
+	if !(havePlaceId && haveCategory && haveIsOrderByStart && haveOffset && haveCount) {
+		log.Print("[service][merchant][GetMerchantsByPlaceId] has nil in placeId, category, isOrderByStart, offset and count")
+		panic(errors.REQUEST_TYPE_ERROR)
+	}
+	placeId := util.StringToUInt(placeIdStr)
+	category := util.StringToUInt(categoryStr)
+	isOrderByStart := util.StringToUInt(isOrderByStartStr)
+	offset := util.StringToUInt(offsetStr)
+	count := util.StringToUInt(countStr)
+
+	// count默认值为15
+	if count == 0 {
+		count = 15
+	}
+	ans := service.GetMerchantsByPlaceId(c, placeId, category, isOrderByStart, offset, count)
+
+	// 设置请求响应
+	c.Set(constants.DATA, ans)
+}

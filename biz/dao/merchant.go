@@ -55,6 +55,24 @@ func FindMerchantByPlaceIdNameAndCategory(placeId uint, merchantName string, mer
 	return findMerchant(db)
 }
 
+// FindMerchantByIdsCategoryLimit 通过id列表，分类分页查询商家
+func FindMerchantByIdsCategoryLimit(merchantIds []uint, category uint, offset uint, count uint) []model.Merchant {
+	db := GetDB()
+	db = filterByInMerchantIDs(db, merchantIds)
+	if category != 0 {
+		db = filterByCategory(db, category)
+	}
+
+	// 如果category为零，那么不进行过滤
+	if category != 0 {
+		db = filterByCategory(db, category)
+	}
+
+	db = limit(db, offset, count)
+
+	return findMerchant(db)
+}
+
 // filterByLikeMerchantName 通过merchantName模糊查询
 func filterByLikeMerchantName(db *gorm.DB, merchantName string) *gorm.DB {
 	db = db.Where(fmt.Sprintf("merchant_name like '%%%s%%'", merchantName))

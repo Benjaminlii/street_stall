@@ -4,9 +4,11 @@ import (
 	"fmt"
 	"github.com/gin-gonic/gin"
 	"log"
+	"sort"
 	"street_stall/biz/constants"
 	"street_stall/biz/constants/errors"
 	"street_stall/biz/dao"
+	"street_stall/biz/domain/dto"
 	"street_stall/biz/domain/model"
 	"street_stall/biz/drivers"
 	"street_stall/biz/util"
@@ -16,7 +18,7 @@ import (
 func GetMerchantsInfoByNameAndPlaceId(c *gin.Context, placeId uint, merchantName string, category uint) map[string]map[string]string {
 	// redis中取出当前正在摆摊的商家id，redis中数据来源于打卡
 	redisKey := fmt.Sprintf("%s%d", constants.REDIS_CURRENT_ACTIVE_MERCHANT_PRE, placeId)
-	merchantIdStrList, err := drivers.RedisClient.SMembers(redisKey).Result()
+	merchantIdStrList, err := drivers.RedisClient.HKeys(redisKey).Result()
 	if err != nil {
 		log.Printf("[service][merchant][GetMerchantsInfoByNameAndPlaceId] get current merchant ids from redis error, err:%s", err)
 		panic(errors.SYSTEM_ERROR)
@@ -87,4 +89,48 @@ func GetMerchantByCurrentUser(c *gin.Context) *model.Merchant {
 	merchant := dao.GetMerchantByUserId(currentUser.ID)
 
 	return merchant
+}
+
+// GetMerchantsByPlaceId 根据区域id获取商家信息列表（按照星级降序排列，固定数量  15）
+func GetMerchantsByPlaceId(c *gin.Context, placeId uint, category uint, isOrderByStart uint, offset uint, count uint) []dto.GetMerchantsDTO {
+	// redis中取出当前正在摆摊的商家id，redis中数据来源于打卡
+	redisKey := fmt.Sprintf("%s%d", constants.REDIS_CURRENT_ACTIVE_MERCHANT_PRE, placeId)
+	merchantIdStrList, err := drivers.RedisClient.HKeys(redisKey).Result()
+	if err != nil {
+		log.Printf("[service][merchant][GetMerchantsByPlaceId] get current merchant ids from redis error, err:%s", err)
+		panic(errors.SYSTEM_ERROR)
+	}
+	// 类型转化
+	merchantIds := make([]uint, len(merchantIdStrList))
+	for _, merchantIdStr := range merchantIdStrList {
+		merchantIds = append(merchantIds, util.StringToUInt(merchantIdStr))
+	}
+	ans := make([]dto.GetMerchantsDTO, len(merchantIds))
+
+	merchants := dao.FindMerchantByIdsCategoryLimit(merchantIds, category, offset, count)
+	// 这里只能手动排序了
+
+	for _, merchant := range merchants {
+		locationId, err := drivers.RedisClient.HGet(redisKey, util.UintToString(merchant.ID)).Result()
+		if err != nil {
+			log.Printf("[service][merchant][GetMerchantsByPlaceId] get location id from redis error, err:%s", err)
+			panic(errors.SYSTEM_ERROR)
+		}
+		location := dao.GetLocationById(util.StringToUInt(locationId))
+		getMerchantsDTO := dto.GetMerchantsDTO{
+			MerchantId:   merchant.ID,
+			Stars:        merchant.GetStar(),
+			Introduction: merchant.Introduction,
+			Location: struct {
+				LocationId    uint `json:"location_id"`
+				NumberOfPlace int  `json:"number_of_place"`
+			}{LocationId: location.ID, NumberOfPlace: location.Number},
+		}
+		ans = append(ans, getMerchantsDTO)
+	}
+
+	sort.Slice(ans, func(i, j int) bool {
+		return ans[i].Stars > ans[j].Stars
+	})
+	return ans
 }
