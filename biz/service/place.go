@@ -85,6 +85,7 @@ func GetLocationMapAndPlaceInfo(c *gin.Context, placeId uint) map[string]interfa
 		locationInfo := make(map[string]interface{}, 2)
 		locationMap[strconv.Itoa(location.Number)] = locationInfo
 		locationInfo[constants.INTRODUCTION] = location.Introduction
+		locationInfo[constants.AREA] = location.Area
 
 		// 该摊位的时间-可预约信息
 		locationStatus := make(map[string]int, 8)

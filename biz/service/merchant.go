@@ -15,7 +15,7 @@ import (
 )
 
 // GetMerchantsInfoByNameAndPlaceId 通过当前时刻商户名称获取商户信息
-func GetMerchantsInfoByNameAndPlaceId(c *gin.Context, placeId uint, merchantName string, category uint) map[string]map[string]string {
+func GetMerchantsInfoByNameAndPlaceId(c *gin.Context, placeId uint, merchantName string, category uint) []map[string]string {
 	// redis中取出当前正在摆摊的商家id，redis中数据来源于打卡
 	redisKey := fmt.Sprintf("%s%d", constants.REDIS_CURRENT_ACTIVE_MERCHANT_PRE, placeId)
 	merchantIdStrList, err := drivers.RedisClient.HKeys(redisKey).Result()
@@ -29,14 +29,25 @@ func GetMerchantsInfoByNameAndPlaceId(c *gin.Context, placeId uint, merchantName
 		merchantIds = append(merchantIds, util.StringToUInt(merchantIdStr))
 	}
 
+	merchantIdLocationIdMap := make(map[uint]uint, len(merchantIds))
+	for _, merchantIdStr := range merchantIdStrList {
+		locationIdStr, err := drivers.RedisClient.HGet(redisKey, merchantIdStr).Result()
+		if err != nil {
+			log.Printf("[service][merchant][GetMerchantsInfoByNameAndPlaceId] get location id by current merchant id from redis error, err:%s", err)
+			panic(errors.SYSTEM_ERROR)
+		}
+		merchantIdLocationIdMap[util.StringToUInt(locationIdStr)] = util.StringToUInt(locationIdStr)
+	}
+
 	// 查询得到商家
 	merchants := dao.FindMerchantByPlaceIdNameAndCategory(placeId, merchantName, merchantIds, category)
 
 	// 组装结果集
-	ans := make(map[string]map[string]string, len(merchants))
+	ans := make([]map[string]string, len(merchants))
 	for _, merchant := range merchants {
-		entity := make(map[string]string, 4)
+		entity := make(map[string]string, 5)
 
+		entity["merchant_id"] = util.UintToString(merchant.ID)
 		entity["name"] = merchant.Name
 		entity["category"] = util.UintToCategoryString(merchant.Category)
 
@@ -46,7 +57,10 @@ func GetMerchantsInfoByNameAndPlaceId(c *gin.Context, placeId uint, merchantName
 
 		entity["introduction"] = merchant.Introduction
 
-		ans[util.UintToString(merchant.ID)] = entity
+		location := dao.GetLocationById(merchantIdLocationIdMap[merchant.ID])
+		entity["location_number_of_place"] = string(rune(location.Number))
+
+		ans = append(ans, entity)
 	}
 
 	return ans

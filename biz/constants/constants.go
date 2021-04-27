@@ -59,6 +59,7 @@ const (
 const (
 	INTRODUCTION = "introduction" // 摊位的介绍
 	TIME_STATUS  = "time_status"  // 摊位的时间以及可否预约状态
+	AREA         = "area"         // 摊位面积
 
 )
 

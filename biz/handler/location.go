@@ -37,8 +37,8 @@ func Reserve(c *gin.Context) {
 		placeId, locationId, order.MerchantId)
 
 	// 设置请求响应
-	respMap := map[string]interface{}{}
-	c.Set(constants.DATA, respMap)
+	// 特化逻辑，设置code为10000， error_message为“预约成功”
+	panic(&errors.Error{Code: 10000, ErrorMessage: "预约成功！"})
 }
 
 // GetMerchantsInfoByNameAndPlaceId 通过当前时刻商户名称获取商户信息，商户分类可选
