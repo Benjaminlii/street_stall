@@ -38,6 +38,7 @@ func DoEvaluation(c *gin.Context) {
 }
 
 // GetEvaluationsByMerchantId 根据商户id获取的评价信息
+// 暂时废弃
 func GetEvaluationsByMerchantId(c *gin.Context) {
 	defer util.SetResponse(c)
 

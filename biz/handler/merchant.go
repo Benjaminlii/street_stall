@@ -118,10 +118,14 @@ func GetMerchantByMerchantId(c *gin.Context) {
 	}
 	merchantId := util.StringToUInt(merchantIdStr)
 
-	ans := service.GetMerchantByMerchantId(c, merchantId)
+	merchantInfo := service.GetMerchantByMerchantId(c, merchantId)
+	evaluationInfo := service.GetEvaluationsByMerchantId(c, merchantId)
 
 	// 设置请求响应
-	c.Set(constants.DATA, ans)
+	respMap := map[string]interface{}{}
+	respMap["merchant_info"] = merchantInfo
+	respMap["evaluation_info"] = evaluationInfo
+	c.Set(constants.DATA, respMap)
 }
 
 // GetMerchantsByPlaceId 根据区域id获取商家信息列表（按照星级降序排列，固定数量  15）

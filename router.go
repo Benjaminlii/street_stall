@@ -64,7 +64,7 @@ func register(r *gin.Engine) {
 	evaluation := streetStall.Group("/evaluation")
 	{
 		evaluation.POST("/do_evaluation", handler.DoEvaluation)
-		evaluation.POST("/get_evaluations_by_merchant_id", handler.GetEvaluationsByMerchantId)
+		//evaluation.POST("/get_evaluations_by_merchant_id", handler.GetEvaluationsByMerchantId)
 	}
 
 	ping := streetStall.Group("/ping")
