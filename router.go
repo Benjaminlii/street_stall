@@ -7,7 +7,7 @@ import (
 )
 
 func register(r *gin.Engine) {
-	streetStall := r.Group("/api/street_stall")
+	streetStall := r.Group("/api")
 
 	// 用户模块
 	user := streetStall.Group("/user")
