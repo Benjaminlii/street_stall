@@ -59,7 +59,7 @@ func SignUp(c *gin.Context) {
 	username, haveUsername := param["username"]
 	password, havePassword := param["password"]
 	name, haveName := param["name"]
-	userIdentityStr, haveUserIdentity := param["userIdentity"]
+	userIdentityStr, haveUserIdentity := param["user_identity"]
 	categoryStr, haveCategory := param["category"]
 	if !(haveUsername && havePassword && haveName && haveUserIdentity && haveCategory) {
 		log.Print("[service][user][SignUp] has nil in username, password, name, userIdentity and category")
