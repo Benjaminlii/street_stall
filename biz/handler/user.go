@@ -166,3 +166,32 @@ func SignOut(c *gin.Context) {
 
 	c.Set(constants.DATA, respMap)
 }
+
+// AdministratorSignUp 管理员登录
+func AdministratorSignUp(c *gin.Context) {
+	defer util.SetResponse(c)
+
+	// 解析请求参数
+	param := make(map[string]string)
+	err := c.BindJSON(&param)
+	if err != nil {
+		log.Printf("[service][administrator][AdministratorSignUp] request type error, err:%s", err)
+		panic(err)
+	}
+	username, haveUsername := param["username"]
+	password, havePassword := param["password"]
+	if !(haveUsername && havePassword) {
+		log.Printf("[service][administrator][AdministratorSignUp] has nil in username and password")
+		panic(errors.REQUEST_TYPE_ERROR)
+	}
+
+	// 校验用户信息
+	user := service.SelectAdministrator(c, username, password)
+	if user == nil {
+		panic(errors.LOGIN_FAILD_ERROR)
+	}
+
+	// 设置请求响应
+	respMap := make(map[string]interface{})
+	c.Set(constants.DATA, respMap)
+}

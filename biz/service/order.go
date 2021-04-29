@@ -71,6 +71,12 @@ func ClockIn(c *gin.Context, orderId uint) {
 	// 获取预约单
 	order := dao.GetOrderById(orderId)
 
+	// 校验预约单状态
+	if order.Status != constants.ORDER_STATUS_CHECK_FINISHED {
+		log.Printf("[service][order][ClockIn] order is not check finished, order id:%d", order.ID)
+		panic(errors.ORDER_MERCHANT_ERROR)
+	}
+
 	// 校验商户是否一致
 	if merchant.ID != order.ID {
 		log.Printf("[service][order][ClockIn] order is not belong current merchant, current merchant name:%s, order id:%d", merchant.Name, order.ID)
@@ -125,5 +131,61 @@ func QuitOrder(c *gin.Context, orderId uint) {
 	// 进行退订
 	// 更新订单状态，这里被取消的订单也视为视为过期状态
 	order.Status = constants.ORDER_STATUS_EXPIRED
+	dao.SaveOrder(order)
+}
+
+// GetOrderToCheck 获取要进行审核的预约单列表，即获取当天，状态为TO_BE_USED的所有预约单
+func GetOrderToCheck(c *gin.Context) []dto.GetOrderToCheckDTO {
+	// 获取预约单
+	orders := dao.GetTodayOrderByStatus(constants.ORDER_STATUS_TO_BE_USED)
+
+	// 组装结果集
+	ans := make([]dto.GetOrderToCheckDTO, len(orders))
+
+	for _, order := range orders {
+		merchant := dao.GetMerchantById(order.MerchantId)
+		location := dao.GetLocationById(order.LocationId)
+		place := dao.GetPlaceById(location.PlaceId)
+		getOrderToCheckDTO := dto.GetOrderToCheckDTO{
+			OrderId:       order.ID,
+			MerchantName:  merchant.Name,
+			PlaceName:     place.Name,
+			NumberOfPlace: location.Number,
+			Time:          order.ReserveTime,
+			PostTime:      order.CreatedAt.Unix(),
+			Remark:        order.Remark,
+		}
+		ans = append(ans, getOrderToCheckDTO)
+	}
+
+	return ans
+}
+
+// CheckOrder 审核预约单
+func CheckOrder(c *gin.Context, orderId uint, active uint) {
+	// 获取预约单
+	order := dao.GetOrderById(orderId)
+	// 校验时间
+	firstSecond := util.GetTodayFirstSecond()
+	lastSecond := util.GetTodayLastSecond()
+	if !(order.CreatedAt.After(firstSecond) && order.CreatedAt.Before(lastSecond)) {
+		log.Printf("[service][order][CheckOrder] order created time is not today, order id:%d", order.ID)
+		panic(errors.ORDER_RESERVE_TIME_ERROR)
+	}
+	// 校验状态
+	if order.Status != constants.ORDER_STATUS_TO_BE_USED {
+		log.Printf("[service][order][CheckOrder] order status is not TO_BE_USED, order id:%d", order.ID)
+		panic(errors.ORDER_STATUS_ERROR)
+
+	}
+	// 根据active获得新的status
+	if active == 1 {
+		// 通过
+		order.Status = constants.ORDER_STATUS_CHECK_FINISHED
+	} else {
+		order.Status = constants.ORDER_STATUS_EXPIRED
+	}
+	// 持久化
+
 	dao.SaveOrder(order)
 }

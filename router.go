@@ -9,11 +9,19 @@ import (
 func register(r *gin.Engine) {
 	streetStall := r.Group("/api")
 
+	// 政府端审核模块
+	manage := streetStall.Group("/manage")
+	{
+		manage.POST("/get_order_to_check", handler.GetOrderToCheck)
+		manage.POST("/check_order", handler.CheckOrder)
+	}
+
 	// 用户模块
 	user := streetStall.Group("/user")
 	{
 		user.POST("/sign_in", handler.SignIn)
 		user.POST("/sign_up", handler.SignUp)
+		user.POST("/administrator_sign_up", handler.AdministratorSignUp)
 
 		user.Use(middleware.CheckUserLoginMiddleware())
 		user.POST("/get_merchant", handler.GetMerchant)
@@ -61,12 +69,14 @@ func register(r *gin.Engine) {
 		merchant.POST("/get_merchants_by_place_id", handler.GetMerchantsByPlaceId)
 	}
 
+	// 评价模块
 	evaluation := streetStall.Group("/evaluation")
 	{
 		evaluation.POST("/do_evaluation", handler.DoEvaluation)
 		//evaluation.POST("/get_evaluations_by_merchant_id", handler.GetEvaluationsByMerchantId)
 	}
 
+	// ping
 	ping := streetStall.Group("/ping")
 	{
 		ping.POST("/ping", handler.Ping)

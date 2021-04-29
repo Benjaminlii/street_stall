@@ -81,3 +81,12 @@ func UpdateVisitorByUserId(c *gin.Context, name string, introduction string) *mo
 
 	return visitor
 }
+
+// SelectAdministrator 管理员登录
+func SelectAdministrator(c *gin.Context, username string, password string) *model.Administrator {
+	administrator := dao.GetAdministratorByUsernameAndPassword(username, password)
+	if administrator == nil {
+		return nil
+	}
+	return administrator
+}

@@ -21,3 +21,4 @@ var NO_LOGIN_ERROR = &Error{Code: 30005, ErrorMessage: "无登录状态！"}
 var LOGIN_FAILD_ERROR = &Error{Code: 30006, ErrorMessage: "登录失败！"}
 var ORDER_MERCHANT_ERROR = &Error{Code: 30007, ErrorMessage: "该订单与当前用户不匹配！"}
 var ORDER_RESERVE_TIME_ERROR = &Error{Code: 30008, ErrorMessage: "该订单预约时间与当前时间不匹配！"}
+var ORDER_STATUS_ERROR = &Error{Code: 30009, ErrorMessage: "订单状态错误！"}

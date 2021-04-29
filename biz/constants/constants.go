@@ -19,10 +19,11 @@ const (
 
 // 订单状态
 const (
-	ORDER_STATUS_TO_BE_USED = 1 // 待使用
-	ORDER_STATUS_IN_USING   = 2 // 使用中
-	ORDER_STATUS_FINISHED   = 3 // 已完成
-	ORDER_STATUS_EXPIRED    = 4 // 过期
+	ORDER_STATUS_TO_BE_USED     = 1 // 待使用
+	ORDER_STATUS_IN_USING       = 2 // 使用中
+	ORDER_STATUS_FINISHED       = 3 // 已完成
+	ORDER_STATUS_EXPIRED        = 4 // 过期
+	ORDER_STATUS_CHECK_FINISHED = 5 // 审核成功待使用
 )
 
 // 摊位的可预约状态

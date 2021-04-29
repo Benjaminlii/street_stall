@@ -69,6 +69,15 @@ func GetTodayOrderByStatusAndReserveTime(status int, reserveTime uint, ifYesterd
 	return orders
 }
 
+// GetTodayOrderByStatus 获取今天某个状态的所有预约单
+func GetTodayOrderByStatus(status int) []model.Order {
+	db := GetDB()
+	db = filterByStatus(db, status)
+	db = filterByTodayCreated(db)
+	orders := findOrder(db)
+	return orders
+}
+
 // SaveOrder 更新并覆盖order
 func SaveOrder(order *model.Order) {
 	db := GetDB()

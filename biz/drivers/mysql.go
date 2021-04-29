@@ -38,6 +38,10 @@ func InitMySQL(config *config.BasicConfig) {
 
 func createTable() {
 	db := DB
+	if !db.HasTable(&model.Administrator{}) {
+		db.Set("gorm:table_options", "ENGINE=InnoDB DEFAULT CHARSET=utf8").CreateTable(&model.Administrator{})
+		log.Print("[system][mysql][createTable] create table `administrator`")
+	}
 	if !db.HasTable(&model.User{}) {
 		db.Set("gorm:table_options", "ENGINE=InnoDB DEFAULT CHARSET=utf8").CreateTable(&model.User{})
 		log.Print("[system][mysql][createTable] create table `user`")
