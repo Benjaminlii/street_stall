@@ -175,13 +175,13 @@ func AdministratorSignUp(c *gin.Context) {
 	param := make(map[string]string)
 	err := c.BindJSON(&param)
 	if err != nil {
-		log.Printf("[service][administrator][AdministratorSignUp] request type error, err:%s", err)
+		log.Printf("[service][user][AdministratorSignUp] request type error, err:%s", err)
 		panic(err)
 	}
 	username, haveUsername := param["username"]
 	password, havePassword := param["password"]
 	if !(haveUsername && havePassword) {
-		log.Printf("[service][administrator][AdministratorSignUp] has nil in username and password")
+		log.Printf("[service][user][AdministratorSignUp] has nil in username and password")
 		panic(errors.REQUEST_TYPE_ERROR)
 	}
 
