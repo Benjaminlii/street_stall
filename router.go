@@ -42,7 +42,7 @@ func register(r *gin.Engine) {
 	// 区域管理模块
 	place := streetStall.Group("/place")
 	{
-		place.POST("/get_place_name_to_id_map", handler.GetPlaceNameToIdMap)
+		place.POST("/get_place_name_id_map", handler.GetPlaceNameToIdMap)
 		place.POST("/get_location_map", handler.GetLocationMap)
 	}
 
