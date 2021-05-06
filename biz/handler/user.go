@@ -186,12 +186,16 @@ func AdministratorSignUp(c *gin.Context) {
 	}
 
 	// 校验用户信息
-	user := service.SelectAdministrator(c, username, password)
-	if user == nil {
+	administrator := service.SelectAdministrator(c, username, password)
+	if administrator == nil {
 		panic(errors.LOGIN_FAILD_ERROR)
 	}
 
+	// 生成并添加token到redis，存储user的json
+	token := util.AddManagerToken(administrator)
+
 	// 设置请求响应
-	respMap := make(map[string]interface{})
+	respMap := make(map[string]interface{}, 2)
+	respMap[constants.TOKEN] = token
 	c.Set(constants.DATA, respMap)
 }

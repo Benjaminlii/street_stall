@@ -15,7 +15,9 @@ func GetOrders(c *gin.Context) {
 
 	getOrderDTOs := service.GetOrderByCurrentMerchant(c)
 
-	c.Set(constants.DATA, getOrderDTOs)
+	respMap := map[string]interface{}{}
+	respMap["orders"] = getOrderDTOs
+	c.Set(constants.DATA, respMap)
 }
 
 // ClockIn 商户到预约时间打卡使用摊位

@@ -35,9 +35,9 @@ func GetLocationMap(c *gin.Context) {
 		log.Printf("[service][place][GetLocationMap] request type error, err:%s", err)
 		panic(err)
 	}
-	placeIdStr, havePlaceId := param["placeId"]
+	placeIdStr, havePlaceId := param["place_id"]
 	if !havePlaceId {
-		log.Print("[service][question][SubmitQuestion] there is no place id")
+		log.Print("[service][place][SubmitQuestion] there is no place id")
 		panic(errors.REQUEST_TYPE_ERROR)
 	}
 	placeId := util.StringToUInt(placeIdStr)

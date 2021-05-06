@@ -41,7 +41,7 @@ func GetEvaluationsByMerchantId(c *gin.Context, merchantId uint) []dto.GetEvalua
 
 	// 根据merchantId获取evaluations
 	evaluations := dao.FindEvaluationsByMerchantId(merchant.ID)
-	ans := make([]dto.GetEvaluationsDTO, len(evaluations))
+	ans := make([]dto.GetEvaluationsDTO, 0)
 
 	for _, evaluation := range evaluations {
 		visitor := dao.GetVisitorById(evaluation.VisitorId)

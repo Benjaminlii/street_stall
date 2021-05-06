@@ -56,7 +56,7 @@ func taskDeleteCurrentMerchantEveryTwoHour() {
 	places := dao.AllPlace()
 
 	// 拼凑得到所有的redis key
-	redisKeys := make([]string, len(places))
+	redisKeys := make([]string, 0)
 	for _, place := range places {
 		redisKeys = append(redisKeys, fmt.Sprintf("%s%d", constants.REDIS_CURRENT_ACTIVE_MERCHANT_PRE, place.ID))
 	}

@@ -24,7 +24,7 @@ func GetMerchantsInfoByNameAndPlaceId(c *gin.Context, placeId uint, merchantName
 		panic(errors.SYSTEM_ERROR)
 	}
 	// 类型转化
-	merchantIds := make([]uint, len(merchantIdStrList))
+	merchantIds := make([]uint, 0)
 	for _, merchantIdStr := range merchantIdStrList {
 		merchantIds = append(merchantIds, util.StringToUInt(merchantIdStr))
 	}
@@ -43,7 +43,7 @@ func GetMerchantsInfoByNameAndPlaceId(c *gin.Context, placeId uint, merchantName
 	merchants := dao.FindMerchantByPlaceIdNameAndCategory(placeId, merchantName, merchantIds, category)
 
 	// 组装结果集
-	ans := make([]map[string]string, len(merchants))
+	ans := make([]map[string]string, 0)
 	for _, merchant := range merchants {
 		entity := make(map[string]string, 5)
 
@@ -115,11 +115,11 @@ func GetMerchantsByPlaceId(c *gin.Context, placeId uint, category uint, isOrderB
 		panic(errors.SYSTEM_ERROR)
 	}
 	// 类型转化
-	merchantIds := make([]uint, len(merchantIdStrList))
+	merchantIds := make([]uint, 0)
 	for _, merchantIdStr := range merchantIdStrList {
 		merchantIds = append(merchantIds, util.StringToUInt(merchantIdStr))
 	}
-	ans := make([]dto.GetMerchantsDTO, len(merchantIds))
+	ans := make([]dto.GetMerchantsDTO, 0)
 
 	merchants := dao.FindMerchantByIdsCategoryLimit(merchantIds, category, offset, count)
 	// 这里只能手动排序了

@@ -23,6 +23,7 @@ func GetMerchant(c *gin.Context) {
 	}
 	respMap := map[string]interface{}{
 		"name":         merchant.Name,
+		"category":     util.UintToCategoryString(merchant.Category),
 		"introduction": merchant.Introduction,
 		"user": map[string]interface{}{
 			"username":      user.Username,

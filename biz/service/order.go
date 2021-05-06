@@ -34,14 +34,14 @@ func GetOrderByCurrentMerchant(c *gin.Context) []dto.GetOrderDTO {
 	// 查询其预约单信息
 	orders := dao.GetOrderByMerchantIdOrderByCreatedAtDesc(merchant.ID)
 
-	ans := make([]dto.GetOrderDTO, len(orders))
+	ans := make([]dto.GetOrderDTO, 0)
 	for _, order := range orders {
 		// 根据预约单获取预约单中的摊位信息和区域信息
 		place := dao.GetPlaceById(order.PlaceId)
 		location := dao.GetLocationById(order.LocationId)
 		getOrderDTO := dto.GetOrderDTO{
 			OrderId:  order.ID,
-			CreateAt: order.CreatedAt.Unix(),
+			CreateAt: order.CreatedAt.UnixNano() / 1e6,
 			Status:   order.Status,
 			Location: struct {
 				Place struct {
@@ -140,7 +140,7 @@ func GetOrderToCheck(c *gin.Context) []dto.GetOrderToCheckDTO {
 	orders := dao.GetTodayOrderByStatus(constants.ORDER_STATUS_TO_BE_USED)
 
 	// 组装结果集
-	ans := make([]dto.GetOrderToCheckDTO, len(orders))
+	ans := make([]dto.GetOrderToCheckDTO, 0)
 
 	for _, order := range orders {
 		merchant := dao.GetMerchantById(order.MerchantId)
@@ -152,7 +152,7 @@ func GetOrderToCheck(c *gin.Context) []dto.GetOrderToCheckDTO {
 			PlaceName:     place.Name,
 			NumberOfPlace: location.Number,
 			Time:          order.ReserveTime,
-			PostTime:      order.CreatedAt.Unix(),
+			PostTime:      order.CreatedAt.UnixNano() / 1e6,
 			Remark:        order.Remark,
 		}
 		ans = append(ans, getOrderToCheckDTO)

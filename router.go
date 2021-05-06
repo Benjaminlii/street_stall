@@ -12,6 +12,8 @@ func register(r *gin.Engine) {
 	// 政府端审核模块
 	manage := streetStall.Group("/manage")
 	{
+		manage.POST("/administrator_sign_up", handler.AdministratorSignUp)
+		manage.Use(middleware.CheckManagerLoginMiddleware())
 		manage.POST("/get_order_to_check", handler.GetOrderToCheck)
 		manage.POST("/check_order", handler.CheckOrder)
 	}
@@ -21,7 +23,6 @@ func register(r *gin.Engine) {
 	{
 		user.POST("/sign_in", handler.SignIn)
 		user.POST("/sign_up", handler.SignUp)
-		user.POST("/administrator_sign_up", handler.AdministratorSignUp)
 
 		user.Use(middleware.CheckUserLoginMiddleware())
 		user.POST("/get_merchant", handler.GetMerchant)
