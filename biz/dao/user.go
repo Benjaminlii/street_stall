@@ -26,7 +26,7 @@ func GetUserByUsernameAndPassword(username string, password string) *model.User 
 // InsertUser 插入一个user对象
 func InsertUser(insertUser *model.User) *model.User {
 	db := GetDB()
-	db.Create(insertUser)
+	db = db.Create(insertUser)
 	if err := db.Error; err != nil {
 		log.Printf("[service][user][InsertUser] db insert error, err:%s", err)
 		panic(err)

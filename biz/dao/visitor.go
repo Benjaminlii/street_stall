@@ -25,7 +25,7 @@ func GetVisitorById(id uint) *model.Visitor {
 // InsertVisitor 插入一个visitor对象
 func InsertVisitor(insertVisitor *model.Visitor) *model.Visitor {
 	db := GetDB()
-	db.Create(insertVisitor)
+	db = db.Create(insertVisitor)
 	if err := db.Error; err != nil {
 		log.Printf("[service][visitor][InsertVisitor] db insert error, err:%s", err)
 		panic(err)

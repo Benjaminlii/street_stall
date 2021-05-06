@@ -39,7 +39,7 @@ func GetOrderByLocationIdNowInUsing(locationId uint) *model.Order {
 // InsertOrder 插入一个order对象
 func InsertOrder(insertOrder *model.Order) *model.Order {
 	db := GetDB()
-	db.Create(insertOrder)
+	db = db.Create(insertOrder)
 	if err := db.Error; err != nil {
 		log.Printf("[service][order][insertOrder] db insert error, err:%s", err)
 		panic(err)

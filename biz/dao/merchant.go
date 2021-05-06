@@ -26,7 +26,7 @@ func GetMerchantById(merchantId uint) *model.Merchant {
 // InsertMerchant 插入一个merchant对象
 func InsertMerchant(insertMerchant *model.Merchant) *model.Merchant {
 	db := GetDB()
-	db.Create(insertMerchant)
+	db = db.Create(insertMerchant)
 	if err := db.Error; err != nil {
 		log.Printf("[service][merchant][InsertMerchant] db insert error, err:%s", err)
 		panic(err)
