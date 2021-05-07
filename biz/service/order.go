@@ -88,7 +88,7 @@ func ClockIn(c *gin.Context, orderId uint) {
 	todayFirstSecond := util.GetTodayFirstSecond()
 	currentHour := time.Now().Hour()
 	// 校验当前小时大于预约时间，并且小于预约时间+2，并且订单的创建时间是今天
-	if !(currentHour > reserveTimeInt &&
+	if !(currentHour >= reserveTimeInt &&
 		currentHour < reserveTimeInt+2 &&
 		order.CreatedAt.After(todayFirstSecond)) {
 		log.Printf("[service][order][ClockIn] time is not right")
