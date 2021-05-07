@@ -69,11 +69,12 @@ func GetTodayOrderByStatusAndReserveTime(status int, reserveTime uint, ifYesterd
 	return orders
 }
 
-// GetTodayOrderByStatus 获取今天某个状态的所有预约单
-func GetTodayOrderByStatus(status int) []model.Order {
+// GetTodayOrderByStatusLimit 获取今天某个状态的所有预约单
+func GetTodayOrderByStatusLimit(status int, index uint, count uint) []model.Order {
 	db := GetDB()
 	db = filterByStatus(db, status)
 	db = filterByTodayCreated(db)
+	db = limit(db, index, count)
 	orders := findOrder(db)
 	return orders
 }

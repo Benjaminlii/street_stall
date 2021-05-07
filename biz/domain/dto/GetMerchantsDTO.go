@@ -8,5 +8,5 @@ type GetMerchantsDTO struct {
 	Location     struct {
 		LocationId    uint `json:"location_id"`     // 商户当前所在摊位id
 		NumberOfPlace int  `json:"number_of_place"` // 该摊位的区域偏移量
-	}
+	} `json:"location"`
 }

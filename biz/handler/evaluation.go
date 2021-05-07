@@ -20,17 +20,17 @@ func DoEvaluation(c *gin.Context) {
 		log.Printf("[service][evaluation][DoEvaluation] request type error, err:%s", err)
 		panic(err)
 	}
-	startStr, haveStart := param["start"]
+	starStr, haveStar := param["star"]
 	merchantIdStr, haveMerchantId := param["merchant_id"]
 	content, haveContent := param["content"]
-	if !(haveStart && haveMerchantId && haveContent) {
-		log.Printf("[service][evaluation][DoEvaluation] has nil in start, merchantId and content")
+	if !(haveStar && haveMerchantId && haveContent) {
+		log.Printf("[service][evaluation][DoEvaluation] has nil in star, merchantId and content")
 		panic(errors.REQUEST_TYPE_ERROR)
 	}
-	start := util.StringToUInt(startStr)
+	star := util.StringToUInt(starStr)
 	merchantId := util.StringToUInt(merchantIdStr)
 
-	service.DoEvaluation(c, merchantId, start, content)
+	service.DoEvaluation(c, merchantId, star, content)
 
 	// 设置请求响应
 	respMap := map[string]interface{}{}

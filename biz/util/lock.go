@@ -81,7 +81,7 @@ func stringLock(key string) bool {
 	for {
 		count++
 		_, isOk := stringMap[key]
-		if isOk {
+		if !isOk {
 			// 找不到说明可以加单机锁
 			stringMap[key] = goroutineId()
 			return true

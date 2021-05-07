@@ -27,6 +27,8 @@ func Reserve(c *gin.Context, placeId uint, locationId uint, reserveTime uint, co
 	place := dao.GetPlaceById(placeId)
 	location := dao.GetLocationById(locationId)
 
+	// todo 加校验
+
 	order := &model.Order{
 		Status:      constants.ORDER_STATUS_TO_BE_USED,
 		PlaceId:     place.ID,

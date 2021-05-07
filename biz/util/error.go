@@ -16,7 +16,7 @@ func SetResponse(c *gin.Context) {
 	dataInterface := new(interface{})
 	if !err {
 		// 接口中未定义data字段
-		log.Print("[system][error] response has not data field.")
+		log.Print("[system][info] response has not data field.")
 		dataInterface = nil
 	} else {
 		dataInterface = &data

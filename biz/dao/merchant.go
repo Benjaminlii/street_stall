@@ -40,10 +40,9 @@ func SaveMerchant(merchant *model.Merchant) {
 	db.Save(merchant)
 }
 
-// FindMerchantByPlaceIdNameAndCategory 通过placeId，name和类别查询商户
-func FindMerchantByPlaceIdNameAndCategory(placeId uint, merchantName string, merchantIds []uint, category uint) []model.Merchant {
+// FindMerchantByPlaceIdNameAndCategory 通过name和类别查询商户
+func FindMerchantByPlaceIdNameAndCategory(merchantName string, merchantIds []uint, category uint) []model.Merchant {
 	db := GetDB()
-	db = filterByPlaceId(db, placeId)
 	db = filterByLikeMerchantName(db, merchantName)
 	db = filterByInMerchantIDs(db, merchantIds)
 
@@ -75,13 +74,13 @@ func FindMerchantByIdsCategoryLimit(merchantIds []uint, category uint, offset ui
 
 // filterByLikeMerchantName 通过merchantName模糊查询
 func filterByLikeMerchantName(db *gorm.DB, merchantName string) *gorm.DB {
-	db = db.Where(fmt.Sprintf("merchant_name like '%%%s%%'", merchantName))
+	db = db.Where(fmt.Sprintf("name like '%%%s%%'", merchantName))
 	return db
 }
 
 // filterByInMerchantIDs 通过merchantId，进行in过滤
 func filterByInMerchantIDs(db *gorm.DB, merchantIds []uint) *gorm.DB {
-	db = db.Where("name in (?)", merchantIds)
+	db = db.Where("id in (?)", merchantIds)
 	return db
 }
 

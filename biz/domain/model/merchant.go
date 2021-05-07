@@ -19,5 +19,8 @@ type Merchant struct {
 
 // GetStar 获取该商户的星级评价
 func (m *Merchant) GetStar() float64 {
+	if m.CommentCount == 0 {
+		return 0
+	}
 	return float64(m.StarSum) / float64(m.CommentCount*1.0)
 }

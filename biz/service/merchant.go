@@ -15,7 +15,7 @@ import (
 )
 
 // GetMerchantsInfoByNameAndPlaceId 通过当前时刻商户名称获取商户信息
-func GetMerchantsInfoByNameAndPlaceId(c *gin.Context, placeId uint, merchantName string, category uint) []map[string]string {
+func GetMerchantsInfoByNameAndPlaceId(c *gin.Context, placeId uint, merchantName string, category uint) []map[string]interface{} {
 	// redis中取出当前正在摆摊的商家id，redis中数据来源于打卡
 	redisKey := fmt.Sprintf("%s%d", constants.REDIS_CURRENT_ACTIVE_MERCHANT_PRE, placeId)
 	merchantIdStrList, err := drivers.RedisClient.HKeys(redisKey).Result()
@@ -40,14 +40,14 @@ func GetMerchantsInfoByNameAndPlaceId(c *gin.Context, placeId uint, merchantName
 	}
 
 	// 查询得到商家
-	merchants := dao.FindMerchantByPlaceIdNameAndCategory(placeId, merchantName, merchantIds, category)
+	merchants := dao.FindMerchantByPlaceIdNameAndCategory(merchantName, merchantIds, category)
 
 	// 组装结果集
-	ans := make([]map[string]string, 0)
+	ans := make([]map[string]interface{}, 0)
 	for _, merchant := range merchants {
-		entity := make(map[string]string, 5)
+		entity := make(map[string]interface{}, 5)
 
-		entity["merchant_id"] = util.UintToString(merchant.ID)
+		entity["merchant_id"] = merchant.ID
 		entity["name"] = merchant.Name
 		entity["category"] = util.UintToCategoryString(merchant.Category)
 

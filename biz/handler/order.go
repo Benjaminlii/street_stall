@@ -78,7 +78,23 @@ func QuitOrder(c *gin.Context) {
 func GetOrderToCheck(c *gin.Context) {
 	defer util.SetResponse(c)
 
-	ans := service.GetOrderToCheck(c)
+	// 解析请求参数
+	param := make(map[string]string)
+	err := c.BindJSON(&param)
+	if err != nil {
+		log.Printf("[service][order][GetOrderToCheck] request type error, err:%s", err)
+		panic(err)
+	}
+	indexStr, haveIndex := param["index"]
+	limitStr, haveLimit := param["limit"]
+	if !(haveIndex && haveLimit) {
+		log.Printf("[service][order][GetOrderToCheck] has nil in index and limit")
+		panic(errors.REQUEST_TYPE_ERROR)
+	}
+	index := util.StringToUInt(indexStr)
+	limit := util.StringToUInt(limitStr)
+
+	ans := service.GetOrderToCheck(c, index, limit)
 
 	// 设置请求响应
 	respMap := map[string]interface{}{}

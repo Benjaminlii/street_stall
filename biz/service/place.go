@@ -106,7 +106,7 @@ func GetLocationMapAndPlaceInfo(c *gin.Context, placeId uint) map[string]interfa
 			} else {
 				// 不存在预约单，那么通过时间判断可否预约
 				nowHour := time.Now().Hour()
-				if nowHour < i {
+				if nowHour < i+2 {
 					// 遍历到的时间点是一个将来时间
 					locationStatus[s] = constants.LOCATION_USED_STATUS_CAN_BE_BOOKED
 				} else {

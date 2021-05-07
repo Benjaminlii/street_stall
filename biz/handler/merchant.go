@@ -1,11 +1,13 @@
 package handler
 
 import (
+	"fmt"
 	"github.com/gin-gonic/gin"
 	"log"
 	"street_stall/biz/constants"
 	"street_stall/biz/constants/errors"
 	"street_stall/biz/dao"
+	"street_stall/biz/domain/dto"
 	"street_stall/biz/service"
 	"street_stall/biz/util"
 )
@@ -161,6 +163,23 @@ func GetMerchantsByPlaceId(c *gin.Context) {
 	}
 	ans := service.GetMerchantsByPlaceId(c, placeId, category, isOrderByStart, offset, count)
 
+	ans = make([]dto.GetMerchantsDTO, 0)
+	for i := 0; i < 10; i++ {
+		dto := dto.GetMerchantsDTO{
+			MerchantId:   1,
+			MerchantName: fmt.Sprintf("商户%d", i),
+			Stars:        4.5,
+			Introduction: "xxxxxxxxxxxx",
+			Location: struct {
+				LocationId    uint `json:"location_id"`     // 商户当前所在摊位id
+				NumberOfPlace int  `json:"number_of_place"` // 该摊位的区域偏移量
+			}{LocationId: 1, NumberOfPlace: 1},
+		}
+		ans = append(ans, dto)
+	}
+
 	// 设置请求响应
-	c.Set(constants.DATA, ans)
+	respMap := map[string]interface{}{}
+	respMap["merchants"] = ans
+	c.Set(constants.DATA, respMap)
 }

@@ -78,7 +78,7 @@ func ClockIn(c *gin.Context, orderId uint) {
 	}
 
 	// 校验商户是否一致
-	if merchant.ID != order.ID {
+	if merchant.ID != order.MerchantId {
 		log.Printf("[service][order][ClockIn] order is not belong current merchant, current merchant name:%s, order id:%d", merchant.Name, order.ID)
 		panic(errors.ORDER_MERCHANT_ERROR)
 	}
@@ -135,9 +135,9 @@ func QuitOrder(c *gin.Context, orderId uint) {
 }
 
 // GetOrderToCheck 获取要进行审核的预约单列表，即获取当天，状态为TO_BE_USED的所有预约单
-func GetOrderToCheck(c *gin.Context) []dto.GetOrderToCheckDTO {
+func GetOrderToCheck(c *gin.Context, index uint, limit uint) []dto.GetOrderToCheckDTO {
 	// 获取预约单
-	orders := dao.GetTodayOrderByStatus(constants.ORDER_STATUS_TO_BE_USED)
+	orders := dao.GetTodayOrderByStatusLimit(constants.ORDER_STATUS_TO_BE_USED, index, limit)
 
 	// 组装结果集
 	ans := make([]dto.GetOrderToCheckDTO, 0)

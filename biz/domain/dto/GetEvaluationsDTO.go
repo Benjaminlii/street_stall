@@ -5,8 +5,9 @@ type GetEvaluationsDTO struct {
 	Star    uint   `json:"star"`    // 评价星级
 	Content string `json:"content"` // 评价内容
 	Visitor struct {
-		UserId       uint   `json:"user_id"`      // 用户id
-		Name         string `json:"name"`         // 游客昵称
-		Introduction string `json:"introduction"` // 个人简介
-	}
+		UserId         uint   `json:"user_id"`         // 用户id
+		Name           string `json:"name"`            // 游客昵称
+		Introduction   string `json:"introduction"`    // 个人简介
+		EvaluationDate int64  `json:"evaluation_date"` // 评价时间
+	} `json:"visitor"`
 }
