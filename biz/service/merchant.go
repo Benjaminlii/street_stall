@@ -133,6 +133,7 @@ func GetMerchantsByPlaceId(c *gin.Context, placeId uint, category uint, isOrderB
 		location := dao.GetLocationById(util.StringToUInt(locationId))
 		getMerchantsDTO := dto.GetMerchantsDTO{
 			MerchantId:   merchant.ID,
+			MerchantName: merchant.Name,
 			Stars:        merchant.GetStar(),
 			Introduction: merchant.Introduction,
 			Location: struct {
