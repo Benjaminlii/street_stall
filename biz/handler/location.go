@@ -3,6 +3,7 @@ package handler
 import (
 	"github.com/gin-gonic/gin"
 	"log"
+	"net/url"
 	"street_stall/biz/constants"
 	"street_stall/biz/constants/errors"
 	"street_stall/biz/service"
@@ -31,7 +32,11 @@ func Reserve(c *gin.Context) {
 	placeId := util.StringToUInt(placeIdStr)
 	locationId := util.StringToUInt(locationIdStr)
 	reserveTime := util.StringToUInt(reserveTimeStr)
-
+	comment, err = url.QueryUnescape(comment)
+	if err != nil {
+		log.Print("[service][location][Reserve] QueryUnescape err")
+		panic(err)
+	}
 	order := service.Reserve(c, placeId, locationId, reserveTime, comment)
 	log.Printf("[service][location][Reserve] reserve location success, placeId:%d, locationId:%d, merchantId:%d",
 		placeId, locationId, order.MerchantId)

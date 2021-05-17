@@ -3,6 +3,7 @@ package handler
 import (
 	"github.com/gin-gonic/gin"
 	"log"
+	"net/url"
 	"street_stall/biz/constants"
 	"street_stall/biz/constants/errors"
 	"street_stall/biz/dao"
@@ -67,6 +68,11 @@ func SignUp(c *gin.Context) {
 	}
 	userIdentity := util.StringToUInt(userIdentityStr)
 	category := util.StringToUInt(categoryStr)
+	name, err = url.QueryUnescape(name)
+	if err != nil {
+		log.Print("[service][user][SignUp] QueryUnescape err")
+		panic(err)
+	}
 
 	// 注册
 	user := service.SignUp(username, password, name, userIdentity, category)
@@ -99,6 +105,16 @@ func UpdateVisitor(c *gin.Context) {
 		panic(errors.REQUEST_TYPE_ERROR)
 	}
 
+	name, err = url.QueryUnescape(name)
+	if err != nil {
+		log.Print("[service][user][UpdateVisitor] QueryUnescape err")
+		panic(err)
+	}
+	introduction, err = url.QueryUnescape(introduction)
+	if err != nil {
+		log.Print("[service][user][UpdateVisitor] QueryUnescape err")
+		panic(err)
+	}
 	// 更新游客信息
 	merchant := service.UpdateVisitorByUserId(c, name, introduction)
 

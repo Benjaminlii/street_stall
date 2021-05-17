@@ -3,6 +3,7 @@ package handler
 import (
 	"github.com/gin-gonic/gin"
 	"log"
+	"net/url"
 	"street_stall/biz/constants"
 	"street_stall/biz/constants/errors"
 	"street_stall/biz/service"
@@ -29,7 +30,11 @@ func DoEvaluation(c *gin.Context) {
 	}
 	star := util.StringToUInt(starStr)
 	merchantId := util.StringToUInt(merchantIdStr)
-
+	content, err = url.QueryUnescape(content)
+	if err != nil {
+		log.Print("[service][evaluation][DoEvaluation] QueryUnescape err")
+		panic(err)
+	}
 	service.DoEvaluation(c, merchantId, star, content)
 
 	// 设置请求响应

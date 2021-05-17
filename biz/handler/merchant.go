@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"github.com/gin-gonic/gin"
 	"log"
+	"net/url"
 	"street_stall/biz/constants"
 	"street_stall/biz/constants/errors"
 	"street_stall/biz/dao"
@@ -55,7 +56,16 @@ func UpdateMerchant(c *gin.Context) {
 		panic(errors.REQUEST_TYPE_ERROR)
 	}
 	category := util.StringToUInt(categoryStr)
-
+	name, err = url.QueryUnescape(name)
+	if err != nil {
+		log.Print("[service][user][UpdateMerchant] QueryUnescape err")
+		panic(err)
+	}
+	introduction, err = url.QueryUnescape(introduction)
+	if err != nil {
+		log.Print("[service][user][UpdateMerchant] QueryUnescape err")
+		panic(err)
+	}
 	// 更新商户信息
 	merchant := service.UpdateMerchantByUserId(c, name, category, introduction)
 

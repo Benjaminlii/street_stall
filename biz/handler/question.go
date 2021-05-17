@@ -3,6 +3,7 @@ package handler
 import (
 	"github.com/gin-gonic/gin"
 	"log"
+	"net/url"
 	"street_stall/biz/constants"
 	"street_stall/biz/constants/errors"
 	"street_stall/biz/service"
@@ -24,6 +25,12 @@ func SubmitQuestion(c *gin.Context) {
 	if !haveQuestion {
 		log.Print("[service][question][SubmitQuestion] there is no question")
 		panic(errors.REQUEST_TYPE_ERROR)
+	}
+
+	question, err = url.QueryUnescape(question)
+	if err != nil {
+		log.Print("[service][question][SubmitQuestion] QueryUnescape err")
+		panic(err)
 	}
 
 	insertedQuestion := service.SaveQuestionByCurrentUser(c, question)
